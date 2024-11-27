@@ -1,2 +1,2 @@
-# neuralink-OA
-# voting-machine-2
+# voting-machine
+This is a voting machine that you can vote with.
