@@ -94,8 +94,8 @@ public class CardReader {
     }
 
     // force failure on the card reader
-    public void setHasFailureTrue(){
-        this.hasFailure = true;
+    public void setFailureStatus(boolean in){
+        this.hasFailure = in;
     }
 
     // Check if the card reader has failure

@@ -24,7 +24,8 @@ public class Monitor {
         this.tamperSensor = tamperSensor;
         this.cardReader = cardReader;
         this.latch = latch;
-        this.failure = false;
+
+        failed = new ArrayList<>();
     }
 
     public ArrayList<String> hasFailure() {

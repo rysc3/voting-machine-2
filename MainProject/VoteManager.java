@@ -12,6 +12,7 @@ public class VoteManager {
     private CardReader cardReader;
     private Latch latch;
     private Monitor monitor;
+    private InputHandler inputHandler;
     private ArrayList<String> failed;
 
     public VoteManager() {
@@ -26,10 +27,17 @@ public class VoteManager {
 
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                  cardReader, latch);
+
+        inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
+                cardReader, latch);
+
         monitor.startMonitoring();
 
         Thread managerThread = new Thread(() -> {
             while (true) {
+
+                inputHandler.handle();
+
                 failed = monitor.hasFailure();
                 if (!failed.isEmpty()){
                     //TODO: Machine has failed, do something
