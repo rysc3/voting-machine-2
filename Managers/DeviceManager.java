@@ -1,7 +1,7 @@
 package Managers;
 
 
-import Drivers.*;
+import DriversLEGACY.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -319,7 +319,7 @@ public class DeviceManager {
                 if(SDCardDriverFilePath != null) {
                     SDCard = new SDCardDriver(SDCardDriverFilePath, Mode.W);
                 }else{
-                    SDCard = new SDCardDriver("sdCardDriver.txt", Mode.W);
+                    SDCard = new SDCardDriver("sdCardDriver1.txt", Mode.W);
                 }
                 SDCard.write(message);
                 SDCard.closeFile();
@@ -330,7 +330,7 @@ public class DeviceManager {
                 if(SDCardDriverFilePath != null){
                 SDCard =  new SDCardDriver(SDCardDriverFilePath, Mode.R);
                 }else{
-                    SDCard = new SDCardDriver("sdCardDriver.txt", Mode.R);
+                    SDCard = new SDCardDriver("sdCardDriver1.txt", Mode.R);
                 }
                 //notifyServerDeviceMessage(deviceName, Arrays.toString(SDCard.read()));
                 SDCard.closeFile();
@@ -484,7 +484,7 @@ public class DeviceManager {
     // Example method to simulate the behavior
     public static void main(String[] args) throws IOException {
         Printer printer = new Printer("printerFile.txt");
-        SDCardDriver sdCardDriver = new SDCardDriver("sdCardDriver.txt", Mode.R);
+        SDCardDriver sdCardDriver = new SDCardDriver("sdCardDriver1.txt", Mode.R);
         TamperSensor tamperSensor = new TamperSensor();
         CardReader cardReader = new CardReader();
         Latch latch = new Latch();
