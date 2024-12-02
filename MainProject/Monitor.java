@@ -25,36 +25,41 @@ public class Monitor {
         this.cardReader = cardReader;
         this.latch = latch;
 
+        failure = false; // initially no fails
         failed = new ArrayList<>();
     }
 
-    public ArrayList<String> hasFailure() {
+    public ArrayList<String> getFailed() {
         return failed;
+    }
+
+    public boolean hasFailure() {
+        return failure;
     }
 
     public void startMonitoring() {
         Thread monitorThread = new Thread(() -> {
-            while (!failure) {
+            while (true) {
                 // check each device for failure
-                if (printer.getFailureStatus()) {
+                if (printer.getFailureStatus() && !failed.contains("Printer")) {
                     failed.add("Printer");
                 }
-                if (vDataSD1.getFailureStatus()) {
+                if (vDataSD1.getFailureStatus() && !failed.contains("SD1")) {
                     failed.add("SD1");
                 }
-                if (vDataSD2.getFailureStatus()) {
+                if (vDataSD2.getFailureStatus() && !failed.contains("SD2")) {
                     failed.add("SD2");
                 }
-                if (ballotSD.getFailureStatus()){
-                    failed.add("Ballot");
+                if (ballotSD.getFailureStatus() && !failed.contains("BallotSD")){
+                    failed.add("BallotSD");
                 }
-                if (tamperSensor.getFailureStatus()) {
+                if (tamperSensor.getFailureStatus() && !failed.contains("TamperSensor")) {
                     failed.add("TamperSensor");
                 }
-                if (cardReader.getFailureStatus()) {
+                if (cardReader.getFailureStatus() && !failed.contains("CardReader")) {
                     failed.add("CardReader");
                 }
-                if (latch.getFailureStatus()) {
+                if (latch.getFailureStatus() && !failed.contains("Latch")) {
                     failed.add("Latch");
                 }
                 if (!failed.isEmpty()) {
@@ -68,7 +73,6 @@ public class Monitor {
                 }
             }
         });
-
         monitorThread.start();
     }
 }

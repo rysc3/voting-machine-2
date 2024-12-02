@@ -116,7 +116,7 @@ public class SDCardDriver {
     }
 
     public boolean getFailureStatus() {
-        hasFailed = checkForFailure();
+        //hasFailed = checkForFailure();
         return hasFailed;
     }
 

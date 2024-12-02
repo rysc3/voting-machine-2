@@ -13,7 +13,8 @@ public class VoteManager {
     private Latch latch;
     private Monitor monitor;
     private InputHandler inputHandler;
-    private ArrayList<String> failed;
+    private boolean failure;
+    private ArrayList<String> failed = new ArrayList<>();
 
     public VoteManager() {
         // set up all device instances
@@ -31,20 +32,22 @@ public class VoteManager {
         inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                 cardReader, latch);
 
+        System.out.println("starting monitor");
         monitor.startMonitoring();
-
+        System.out.println("starting input handler");
+        inputHandler.handle();
+        System.out.println("TEST");
         Thread managerThread = new Thread(() -> {
+            System.out.println("test");
             while (true) {
-
-                inputHandler.handle();
-
-                failed = monitor.hasFailure();
-                if (!failed.isEmpty()){
-                    //TODO: Machine has failed, do something
-                    for (String failure : failed) {
-                        System.out.println(failure + " has failed!\n");
-                    }
+                failure = monitor.hasFailure();
+                if (failure){
+                    // get list of failed devices and give to inputHandler for user to see
+                    failed = monitor.getFailed();
+                    inputHandler.setFailedList(failed);
+                    //TODO: Machine has failed: notify admin, abort voter
                 }
+
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -52,5 +55,6 @@ public class VoteManager {
                 }
             }
         });
+        managerThread.start();
     }
 }
