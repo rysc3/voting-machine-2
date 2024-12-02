@@ -12,6 +12,7 @@ public class VoteManager {
     private CardReader cardReader;
     private Latch latch;
     private Monitor monitor;
+    private User user;
     private InputHandler inputHandler;
     private boolean failure;
     private ArrayList<String> failed = new ArrayList<>();
@@ -28,15 +29,14 @@ public class VoteManager {
 
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                  cardReader, latch);
-
+        user = new User(cardReader);
         inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                 cardReader, latch);
 
-        System.out.println("starting monitor");
         monitor.startMonitoring();
-        System.out.println("starting input handler");
+        // Todo: start user
         inputHandler.handle();
-        System.out.println("TEST");
+
         Thread managerThread = new Thread(() -> {
             System.out.println("test");
             while (true) {
