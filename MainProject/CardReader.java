@@ -15,7 +15,7 @@ public class CardReader {
     /*
      * Inserts a card with a specific code
      * "V" - Voter
-     * "E" - Election Official
+     * "A" - Election Official
      */
     public enum LoginType {
         A, V
@@ -44,7 +44,7 @@ public class CardReader {
     }
 
 
-    // Determine the type of card based on the first letter of the code (V or E)
+    // Determine the type of card based on the first letter of the code (V or A)
     public LoginType cardType() {
 
         if (!cardInserted || cardCode == null || cardCode.isEmpty()) {

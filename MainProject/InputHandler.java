@@ -1,6 +1,7 @@
 package MainProject;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class InputHandler {
@@ -13,6 +14,7 @@ public class InputHandler {
     private CardReader cardReader;
     private Latch latch;
     private ArrayList<String> failed = new ArrayList<>();
+    private ArrayList<String> cards = new ArrayList<>();
 
     public InputHandler(Printer printer, SDCardDriver vDataSD1, SDCardDriver vDataSD2,
                    SDCardDriver ballotSD, TamperSensor tamperSensor,
@@ -33,19 +35,20 @@ public class InputHandler {
 
             while (true) {
                 System.out.println("Select an option:\n" +
-                        "[1] Set Failure\n" +
-                        "[2] Get Failed Devices");
+                        "[1] Set failure\n" +
+                        "[2] Get failed devices\n" +
+                        "[3] Generate a new card\n" +
+                        "[4] Select a card to insert");
                 input = scan.nextLine();
                 switch (input) {
-                    case "1" -> {
-                        setFail(scan);
-                    }
-                    case "2" -> {
-                        printFailed();
-                    }
-                    // Todo: add card reader/card generation stuff
-                    // case 3: generate card
-                    // case 4: insert card
+                    // select a device to fail
+                    case "1" -> setFail(scan);
+                    // print failed devices
+                    case "2" -> printFailed();
+                    // generate a new card
+                    case "3" -> generateCard(scan);
+                    // select a card to insert
+                    case "4" -> insertCard(scan);
                     //   -> will display all generated cards, select a card to insert
                     default -> {
                         System.out.println("Invalid input.");
@@ -60,16 +63,20 @@ public class InputHandler {
         String input = "";
         while (input.equals("")) {
             System.out.println("Select a device to fail:\n" +
+                    "[0] <- Go Back" +
                     "[1] Printer\n" +
                     "[2] Voting Data SD1\n" +
                     "[3] Voting Data SD2\n" +
                     "[4] Ballot SD\n" +
                     "[5] Tamper Sensor\n" +
                     "[6] Card Reader\n" +
-                    "[7] Latch\n" +
-                    "[8] <- Go Back");
+                    "[7] Latch");
             input = scan.nextLine();
             switch (input) {
+                // go back
+                case "0" -> {
+                    break;
+                }
                 // set failure in printer
                 case "1" -> printer.setFailureStatus(true);
                 // set failure in sd 1
@@ -84,10 +91,6 @@ public class InputHandler {
                 case "6" -> cardReader.setFailureStatus(true);
                 // set failure in latch
                 case "7" -> latch.setFailureStatus(true);
-                // go back
-                case "8" -> {
-                    break;
-                }
                 default -> {
                     input = "";
                     System.out.println("Invalid input.");
@@ -108,6 +111,98 @@ public class InputHandler {
         }
         else {
             System.out.println("No failed devices.");
+        }
+    }
+
+    private void generateCard(Scanner scan) {
+        String cardNumber;
+        String input = "";
+        while (input.equals("")) {
+        System.out.println("[0] <- Go Back\n" +
+                "[1] Admin card\n" +
+                "[2] Voter card");
+            input = scan.nextLine();
+            switch (input) {
+                case "0" -> {
+                    break;
+                }
+                // create admin card
+                case "1" -> {
+                    cardNumber = "A" + generateNumbers();
+                    cards.add(cardNumber);
+                }
+                // create voter card
+                case "2" -> {
+                    cardNumber = "V" + generateNumbers();
+                    cards.add(cardNumber);
+                }
+                default -> {
+                    input = "";
+                    System.out.println("Invalid input.");
+                }
+            }
+        }
+    }
+
+    private StringBuilder generateNumbers() {
+        Random rand = new Random();
+        StringBuilder randNumber = new StringBuilder();
+
+        for (int i = 0; i < 8; i++) {
+            // generate a number between 0 and 9
+            int digit = rand.nextInt(10);
+            randNumber.append(digit);
+        }
+        return randNumber;
+    }
+
+    // Todo: implement this method using card reader
+    private void insertCard(Scanner scan) {
+        if (cards.isEmpty()) {
+            System.out.println("No cards available. Generate a new card.");
+        }
+        // print list of cards and let user select one to insert
+        else {
+            int numCards = cards.size();
+            int inputNumber;
+            String input = "";
+            while (input.equals("")) {
+                System.out.println("Select a card to insert:\n" +
+                        "[0] <- Go Back");
+                printCards();
+                input = scan.nextLine();
+
+                try {
+                    inputNumber = Integer.parseInt(input);
+                    // go back
+                    if (inputNumber == 0) {
+                        break;
+                    }
+                    // If card index is in range, insert it
+                    if (inputNumber > 0 && inputNumber <= numCards) {
+                        String card = cards.get(inputNumber-1);
+                        cardReader.insertCard(card);
+                        break;
+                    } else {
+                        System.out.println("Invalid input.");
+                        input = "";
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input.");
+                    input = "";
+                }
+            }
+        }
+    }
+
+    private void printCards() {
+        if (!cards.isEmpty()){
+            for (String card : cards) {
+                System.out.println("[" + (cards.indexOf(card)+1) + "] " + card);
+            }
+        }
+        else {
+            System.out.println("No cards available.");
         }
     }
 }
