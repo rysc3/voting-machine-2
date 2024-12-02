@@ -23,7 +23,7 @@ public class CardReader {
 
     public void insertCard(String code) {
         if (!cardInserted) {
-            this.cardInserted = true;
+            setCardInsert(true);
             this.cardCode = code;
 
             System.out.println("Card inserted with access code: " + code);
@@ -33,8 +33,8 @@ public class CardReader {
     }
 
 
-    private void setCardInsertTrue(){
-        this.cardInserted = true;
+    private void setCardInsert(boolean insert) {
+        this.cardInserted = insert;
     }
 
 
@@ -45,7 +45,7 @@ public class CardReader {
 
 
     // Determine the type of card based on the first letter of the code (V or A)
-    public LoginType cardType() {
+    public String cardType() {
 
         if (!cardInserted || cardCode == null || cardCode.isEmpty()) {
             return null;
@@ -54,9 +54,9 @@ public class CardReader {
         char firstLetter = cardCode.charAt(0);
 
         if (firstLetter == 'A') {
-            return LoginType.A;
+            return "Admin";
         } else if (firstLetter == 'V') {
-            return LoginType.V;
+            return "Voter";
         } else {
             return null;
         }
@@ -74,7 +74,7 @@ public class CardReader {
     // Ejects the card
     public void ejectCard() {
         if (cardInserted) {
-            cardInserted = false;
+            setCardInsert(false);
             cardCode = null;
             System.out.println("Card ejected.");
         } else {

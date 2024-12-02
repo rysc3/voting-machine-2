@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class InputHandler {
 
+    private VoteManager voteManager;
     private Printer printer;
     private SDCardDriver vDataSD1;
     private SDCardDriver vDataSD2;
@@ -13,6 +14,7 @@ public class InputHandler {
     private TamperSensor tamperSensor;
     private CardReader cardReader;
     private Latch latch;
+    private User user;
     private ArrayList<String> failed = new ArrayList<>();
     private ArrayList<String> cards = new ArrayList<>();
 
@@ -28,6 +30,18 @@ public class InputHandler {
         this.latch = latch;
     }
 
+    public InputHandler(VoteManager voteManager) {
+        this.voteManager = voteManager;
+        this.printer = voteManager.getPrinter();
+        this.vDataSD1 = voteManager.getvDataSD1();
+        this.vDataSD2 = voteManager.getvDataSD2();
+        this.ballotSD = voteManager.getBallotSD();
+        this.tamperSensor = voteManager.getTamperSensor();
+        this.cardReader = voteManager.getCardReader();
+        this.latch = voteManager.getLatch();
+        this.user = voteManager.getUser();
+    }
+
     public void handle() {
         Thread handleThread = new Thread(() -> {
             Scanner scan = new Scanner(System.in);
@@ -38,7 +52,8 @@ public class InputHandler {
                         "[1] Set failure\n" +
                         "[2] Get failed devices\n" +
                         "[3] Generate a new card\n" +
-                        "[4] Select a card to insert");
+                        "[4] Select a card to insert\n" +
+                        "[5] Eject card");
                 input = scan.nextLine();
                 switch (input) {
                     // select a device to fail
@@ -49,7 +64,8 @@ public class InputHandler {
                     case "3" -> generateCard(scan);
                     // select a card to insert
                     case "4" -> insertCard(scan);
-                    //   -> will display all generated cards, select a card to insert
+                    // eject inserted card, if it is voter card then wipe it
+                    case "5" -> removeCard(scan);
                     default -> {
                         System.out.println("Invalid input.");
                     }
@@ -192,6 +208,17 @@ public class InputHandler {
                     input = "";
                 }
             }
+        }
+    }
+
+    private void removeCard(Scanner scan) {
+        if (cardReader.cardType().equals("Voter")) {
+            System.out.println(cardReader.cardCode() + " has been removed.");
+            cards.remove(cardReader.cardCode());
+            user.eraseCard(cardReader);
+        }
+        else {
+            user.removeCard(cardReader);
         }
     }
 

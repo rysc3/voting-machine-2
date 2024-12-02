@@ -1,6 +1,7 @@
 package MainProject;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class VoteManager {
 
@@ -30,15 +31,16 @@ public class VoteManager {
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                  cardReader, latch);
         user = new User(cardReader);
-        inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
-                cardReader, latch);
+        /* inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
+         *       cardReader, latch);
+         */
+        inputHandler = new InputHandler(this);
 
         monitor.startMonitoring();
         // Todo: start user
         inputHandler.handle();
 
         Thread managerThread = new Thread(() -> {
-            System.out.println("test");
             while (true) {
                 failure = monitor.hasFailure();
                 if (failure){
@@ -46,6 +48,15 @@ public class VoteManager {
                     failed = monitor.getFailed();
                     inputHandler.setFailedList(failed);
                     //TODO: Machine has failed: notify admin, abort voter
+                }
+
+                if(user.isUserDone()) {
+                    if(cardReader.cardType().equals("Voter")){
+                        cardReader.eraseCard();
+                    }
+                    else {
+                        cardReader.ejectCard();
+                    }
                 }
 
                 try {
@@ -57,4 +68,41 @@ public class VoteManager {
         });
         managerThread.start();
     }
+
+    public Printer getPrinter() {
+        return printer;
+    }
+
+    public SDCardDriver getvDataSD1() {
+        return vDataSD1;
+    }
+
+    public SDCardDriver getvDataSD2() {
+        return vDataSD2;
+    }
+
+    public SDCardDriver getBallotSD() {
+        return ballotSD;
+    }
+
+    public TamperSensor getTamperSensor() {
+        return tamperSensor;
+    }
+
+    public CardReader getCardReader() {
+        return cardReader;
+    }
+
+    public Latch getLatch() {
+        return latch;
+    }
+
+    public Monitor getMonitor() {
+        return monitor;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
 }
