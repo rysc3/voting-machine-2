@@ -3,6 +3,8 @@ package Main;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Screen.screenControl.ScreenController;
+
 public class VoteManager {
 
     private Printer printer;
@@ -17,6 +19,7 @@ public class VoteManager {
     private InputHandler inputHandler;
     private boolean failure;
     private ArrayList<String> failed = new ArrayList<>();
+    private ScreenController screenController;
 
     public VoteManager() {
         // set up all device instances
@@ -35,6 +38,10 @@ public class VoteManager {
          *       cardReader, latch);
          */
         inputHandler = new InputHandler(this);
+
+        // Starting the screen
+        screenController = new ScreenController();
+        screenController.turnOn();
 
         monitor.startMonitoring();
         // Todo: start user
