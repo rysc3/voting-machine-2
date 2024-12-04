@@ -16,6 +16,7 @@ public class VoteManager {
     private Latch latch;
     private Monitor monitor;
     private User user;
+    private Admin admin;
     private InputHandler inputHandler;
     private boolean failure;
     private ArrayList<String> failed = new ArrayList<>();
@@ -30,13 +31,10 @@ public class VoteManager {
         tamperSensor = new TamperSensor();
         cardReader = new CardReader();
         latch = new Latch();
-
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
-                 cardReader, latch);
+                cardReader, latch);
         user = new User(cardReader);
-        /* inputHandler = new InputHandler(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
-         *       cardReader, latch);
-         */
+
         inputHandler = new InputHandler(this);
 
         // Starting the screen
@@ -57,6 +55,14 @@ public class VoteManager {
                     //TODO: Machine has failed: notify admin, abort voter
                 }
 
+                if (cardReader.isCardIn()) {
+                    if (cardReader.cardType().equals("Admin") && admin != null) {
+                        admin = new Admin(cardReader.cardCode());
+                    }
+                } else {
+                    admin = null;
+                }
+
                 if(user.isUserDone()) {
                     if(cardReader.cardType().equals("Voter")){
                         cardReader.eraseCard();
@@ -73,6 +79,8 @@ public class VoteManager {
                 }
             }
         });
+
+
         managerThread.start();
     }
 
