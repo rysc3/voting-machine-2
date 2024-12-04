@@ -20,6 +20,8 @@ public class Admin {
 
     public void startAdminThread() {
         Thread adminThread = new Thread(() -> {
+
+            //while not done? this sleep loop might not be necessary once screen stuff is implemented
             while (true) {
 
 

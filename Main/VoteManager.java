@@ -76,7 +76,9 @@ public class VoteManager {
                         admin = new Admin(cardReader.cardCode(), latches);
                         admin.startAdminThread();
                     }
-                    if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
+                    if (cardReader.cardType().equals("Voter") && voter == null) {
+                        //Todo: re-enable line below and remove this ^ line used for testing
+                    //if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
                         voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, printer);
                         voter.startVoterThread();
                     }

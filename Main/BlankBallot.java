@@ -17,9 +17,9 @@ public class BlankBallot {
 
         // create new ballot object
         newBallot = ExtractInfoXML.makeBallotFromXML(ballotString);
-
-        // print for testing
-        ExtractInfoXML.printBallot(newBallot);
     }
 
+    public Ballot getNewBallot() {
+        return newBallot;
+    }
 }
