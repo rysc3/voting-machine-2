@@ -1,10 +1,6 @@
 package Main;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-
-import Screen.screenControl.ScreenController;
 
 public class VoteManager {
 
@@ -34,7 +30,7 @@ public class VoteManager {
         printer = new Printer("printerFile.txt");
         vDataSD1 = new SDCardDriver("sdCardDriver1.txt", 'W');
         vDataSD2 = new SDCardDriver("sdCardDriver2.txt", 'W');
-        ballotSD = new SDCardDriver("testBallot.txt", 'R');
+        ballotSD = new SDCardDriver("mainBallot.xml", 'R');
         tamperSensor = new TamperSensor();
         cardReader = new CardReader();
         latch1 = new Latch();
@@ -80,7 +76,9 @@ public class VoteManager {
                         admin = new Admin(cardReader.cardCode(), latches);
                         admin.startAdminThread();
                     }
-                    if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
+                    if (cardReader.cardType().equals("Voter") && voter == null) {
+                        //Todo: re-enable line below and remove this ^ line used for testing
+                    //if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
                         voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, printer);
                         voter.startVoterThread();
                     }
@@ -141,5 +139,4 @@ public class VoteManager {
     public User getUser() {
         return user;
     }
-
 }

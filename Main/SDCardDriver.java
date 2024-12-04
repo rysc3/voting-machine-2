@@ -137,14 +137,14 @@ public class SDCardDriver {
             writeDriver.closeFile();
 
             // Now, create an SDCardDriver instance in read mode (Mode.R)
-            SDCardDriver readDriver = new SDCardDriver(filePath, 'R');
+            SDCardDriver readDriver = new SDCardDriver("mainBallot.xml", 'R');
 
             try {
                 // Read the data back from the SD card (file)
                 String[] data = readDriver.read();
 
                 // Print the data that was read from the SD card
-                System.out.println("Data read from sdCardDriver1.txt:");
+                System.out.println("Data read from mainBallot.xml:");
                 for (String line : data) {
                     System.out.println(line);
                 }
