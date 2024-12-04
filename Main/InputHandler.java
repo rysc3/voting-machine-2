@@ -18,18 +18,6 @@ public class InputHandler {
     private ArrayList<String> failed = new ArrayList<>();
     private ArrayList<String> cards = new ArrayList<>();
 
-    public InputHandler(Printer printer, SDCardDriver vDataSD1, SDCardDriver vDataSD2,
-                   SDCardDriver ballotSD, TamperSensor tamperSensor,
-                   CardReader cardReader, Latch latch) {
-        this.printer = printer;
-        this.vDataSD1 = vDataSD1;
-        this.vDataSD2 = vDataSD2;
-        this.ballotSD = ballotSD;
-        this.tamperSensor = tamperSensor;
-        this.cardReader = cardReader;
-        this.latch = latch;
-    }
-
     public InputHandler(VoteManager voteManager) {
         this.voteManager = voteManager;
         this.printer = voteManager.getPrinter();
@@ -42,7 +30,7 @@ public class InputHandler {
         this.user = voteManager.getUser();
     }
 
-    public void handle() {
+    public void startInputHandlerThread() {
         Thread handleThread = new Thread(() -> {
             Scanner scan = new Scanner(System.in);
             String input;

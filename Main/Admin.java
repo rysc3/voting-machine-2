@@ -4,6 +4,9 @@ public class Admin {
 
     public Admin(String cardCode) {
         System.out.println("New admin... card code: " + cardCode);
+    }
+
+    public void startAdminThread() {
         Thread adminThread = new Thread(() -> {
             while (true) {
 

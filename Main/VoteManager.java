@@ -1,7 +1,6 @@
 package Main;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import Screen.screenControl.ScreenController;
 
@@ -34,17 +33,20 @@ public class VoteManager {
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                 cardReader, latch);
         user = new User(cardReader);
-
         inputHandler = new InputHandler(this);
 
         // Starting the screen
         screenController = new ScreenController();
         screenController.turnOn();
 
-        monitor.startMonitoring();
-        // Todo: start user
-        inputHandler.handle();
+        monitor.startMonitorThread();
+        user.startUserThread();
+        inputHandler.startInputHandlerThread();
+        startManagerThread();
 
+    }
+
+    public void startManagerThread() {
         Thread managerThread = new Thread(() -> {
             while (true) {
                 failure = monitor.hasFailure();
@@ -58,6 +60,7 @@ public class VoteManager {
                 if (cardReader.isCardIn()) {
                     if (cardReader.cardType().equals("Admin") && admin != null) {
                         admin = new Admin(cardReader.cardCode());
+                        admin.startAdminThread();
                     }
                 } else {
                     admin = null;
@@ -79,8 +82,6 @@ public class VoteManager {
                 }
             }
         });
-
-
         managerThread.start();
     }
 

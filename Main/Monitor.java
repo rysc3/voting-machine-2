@@ -37,7 +37,7 @@ public class Monitor {
         return failure;
     }
 
-    public void startMonitoring() {
+    public void startMonitorThread() {
         Thread monitorThread = new Thread(() -> {
             while (true) {
                 // check each device for failure

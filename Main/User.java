@@ -7,7 +7,9 @@ public class User {
     public User(CardReader cardReader) {
         this.cardReader = cardReader;
         this.userDone = false;
+    }
 
+    public void startUserThread() {
         Thread userThread = new Thread(() -> {
             while (true) {
                 //continuously check if a card has been inserted
@@ -25,7 +27,6 @@ public class User {
             }
         });
         userThread.start();
-
     }
 
     public void removeCard(CardReader reader) {
