@@ -1,6 +1,6 @@
 package Screen.screenControl;
 
-import Ballot.Option;
+import Main.Option;
 import Screen.testSuite.Proposition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,22 +16,36 @@ import javafx.scene.text.FontWeight;
 import java.util.Locale;
 
 /**
- * TODO:
- * Clean out ALL admin logic - completed
+ * Screen generated based on the provided 'proposition'
+ * Format is:
  *
- * Modify function that builds the "scene" to handle different combos of inputs
- * -- completed
+ * ___________________________________
+ *               HEADER               |
+ *             Description            |
+ *                                    |
+ *      option1         option2       |
+ *      option3         option..      |
+ *                                    |
+ *  NavBtn1     NavBtn2     NavBtn... |
+ * ____________________________________
  *
- * Add functionality for multiple options to be picked -- completed
+ * Header - Proposition.propName
+ * Description - Proposition.propDesc
+ * Options - (ArrayList) proposition.options
+ * NavButtons - (String[]) this.nav
+ *
+ * Number of selectable options : proposition.selectableOptions (single or multi choice)
+ *
+ * Nav buttons return their index to the parent class. Used for overall logic like "go back" or "next".
  *
  */
 public class VoteScreen {
 
-    private Ballot.Proposition proposition;
+    private Main.Proposition proposition;
     private ScreenController controller;
     private String[] nav;
 
-    public VoteScreen(Ballot.Proposition proposition, ScreenController controller, String[] nav) {
+    public VoteScreen(Main.Proposition proposition, ScreenController controller, String[] nav) {
         this.proposition = proposition;
         this.controller = controller;
         this.nav = nav;
@@ -191,6 +205,9 @@ public class VoteScreen {
     /*
      * TODO @Keegan We need the logic here to show a shutdown screen. Should only
      * have a single selectable option "Shut down" on it.
+     *
+     * Keegan: Should be doable by just having controller draw a screen with an empty proposition
+     * and 1 nav button "shutdown"
      */
     public void createShutdownScreen() {
 

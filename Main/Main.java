@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.util.Arrays;
 
 import Screen.screenControl.ScreenController;
+import javafx.application.Application;
 import javafx.stage.Screen;
 
 public class Main {
@@ -52,22 +53,25 @@ public class Main {
     // manager.connectToServer("localhost", 12345);
     // }
 
+    private static ScreenController scr;
+
     public static void main(String[] args) {
 
         VoteManager voteManager = new VoteManager();
-        
-        /*
-         * This breaks because it tries to get the instance of the screenController before it has finished starting up, and ust gets a null pointer.
-         */
-        // new Thread(() -> ScreenController.main(args)).start();
 
-        // ScreenController screenController = ScreenController.getInstance();
-        // screenController.connectToServer("localhost", 112233);
-        ScreenController.launchScreenController(args);
-        ScreenController screenController = ScreenController.getInstance();
-        screenController.connectToServer("localhost", 420);
-        
-        // VoteManager voteManager = new VoteManager();
+        // Start screen controller on it's own thread
+        //new Thread(() -> ScreenController.main(args)).start();
+        //ScreenController screenController = ScreenController.getInstance();
+        new Thread(() -> Application.launch(ScreenController.class)).start();
+
+        // Wait for the JavaFX application to initialize the Controller instance
+        while ((scr = ScreenController.getInstance()) == null) {
+            // Busy-wait until the Controller instance is available
+        }
+
+
+        scr.connectToServer("localhost", 123);
+
         voteManager.startManagerThread();
     }
 

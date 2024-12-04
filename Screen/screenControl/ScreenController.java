@@ -1,9 +1,10 @@
 package Screen.screenControl;
 
-import Ballot.Ballot;
-import Ballot.ExtractInfoXML;
-import Ballot.Option;
-import Ballot.Proposition;
+import Main.Ballot;
+import Main.ExtractInfoXML;
+import Main.Option;
+import Main.Proposition;
+import Main.Message;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,7 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +31,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ScreenController extends Application {
+public class ScreenController extends Application{
+
+    private static ScreenController instance;
+    private final BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
+    private TextArea logArea;
 
     private Stage primaryStage;
     private boolean isOn = false;
@@ -36,9 +48,6 @@ public class ScreenController extends Application {
     private String ballotString;
     private boolean hasScreenFailed;
 
-    private BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(1);
-
-    private static ScreenController instance;
 
     public ScreenController() {
         instance = this; // Singleton pattern
@@ -46,19 +55,46 @@ public class ScreenController extends Application {
         this.ballotString = null;
     }
 
-    public static ScreenController getInstance() {
+    public static synchronized ScreenController getInstance() {
         return instance;
     }
 
-    public static void launchScreenController(String[] args) {
-        Application.launch(ScreenController.class, args);
+    public void sendMessage(Message message) {
+        queue.offer(message);
     }
 
     @Override
     public void start(Stage primaryStage) {
+        instance = this;
+
         this.primaryStage = primaryStage;
+
+        // Start a background thread to process messages
+        new Thread(this::processMessages).start();
+
         showWelcomeScreen();
     }
+
+    private void processMessages() {
+        while (true) {
+            try {
+                Message message = queue.poll(); // Non-blocking retrieval
+                if (message != null) {
+                    // Update the UI on the JavaFX Application Thread
+                    Platform.runLater(() -> System.out.println(
+                            "Processing message from " + message.getSender() + ": " + message.getContent() + "\n"
+                    ));
+                }
+                Thread.sleep(100); // Avoid tight looping
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+
+
 
     // === JavaFX UI Methods ===
     public void turnOn() {
@@ -77,30 +113,21 @@ public class ScreenController extends Application {
         Scene scene = new Scene(layout, 400, 600);
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Voting System");
+        primaryStage.setTitle("Voting System DEBUG");
         primaryStage.show();
     }
 
     public void showProposition(Proposition prop, String[] nav) {
-        Platform.runLater(() -> {
-            VBox layout = new VBox();
-            Button backButton = new Button(nav[0]);
-            Button nextButton = new Button(nav[1]);
-
-            backButton.setOnAction(e -> queue.offer(0));
-            nextButton.setOnAction(e -> queue.offer(1));
-
-            layout.getChildren().addAll(backButton, nextButton);
-            primaryStage.setScene(new Scene(layout, 400, 600));
-        });
+        Platform.runLater(() -> instance.showScreen(prop, nav));
     }
 
-    public int waitForSelection() throws InterruptedException {
+    public Message waitForSelection() throws InterruptedException {
         return queue.take();
     }
 
     // === Socket Communication Methods ===
     public void connectToServer(String host, int port) {
+        System.out.println("connectToServer Called"); //debug
         new Thread(() -> {
             try {
                 socket = new Socket(host, port);
@@ -110,6 +137,9 @@ public class ScreenController extends Application {
 
                 listenToServer();
             } catch (IOException e) {
+
+                System.out.println("connectToServer Failed"); //debug
+
                 e.printStackTrace();
             }
         }).start();
@@ -194,10 +224,10 @@ public class ScreenController extends Application {
                 showProposition(prop, nav);
 
                 try {
-                    int result = waitForSelection();
-                    if (result == 1)
+                    Message result = waitForSelection();
+                    if (Integer.parseInt( result.getContent()) == 1)
                         i++;
-                    else if (result == 0 && i > 0)
+                    else if (Integer.parseInt( result.getContent()) == 0 && i > 0)
                         i--;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -220,6 +250,51 @@ public class ScreenController extends Application {
         }
     }
 
+    /*
+     * TODO @sara same deal here with the ballot issue
+     */
+    private void showScreen(Proposition prop, String[] nav) {
+        VoteScreen voteScreen = new VoteScreen(prop, this, nav);
+        if (isOn) {
+            Scene scene = voteScreen.createVotingScreen();
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Voting System - Screen");
+            primaryStage.show();
+            if (prop.options().isEmpty()){
+                try {
+                    queue.put(new Message("screenController", "noOptions"));  // Put the value in the queue when button is pressed
+                } catch (InterruptedException e) {
+                    System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
+                    e.printStackTrace();
+                }
+            }
+        } else if (!isOn) {
+            Scene scene = voteScreen.drawOffScreen();
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Voting System");
+            primaryStage.show();
+        }
+    }
+
+    protected void buttonHandler(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource();
+        String buttonId = clickedButton.getId();
+        try {
+            queue.put(new Message("navBtn", buttonId)); // Put the value in the queue when button is pressed
+        } catch (InterruptedException e) {
+            System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * TODO @sara, looks like Ballot has been nuked. I think we'll need to fix this once Ballot is added back.
+     */
+    // public void showProposition(Ballot.Proposition prop, String[] nav) {
+
+    //     Platform.runLater(() -> instance.showScreen(prop, nav));
+    // }
+
     public void disconnect() {
         try {
             if (socket != null) {
@@ -229,5 +304,14 @@ public class ScreenController extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void processSDCardData(String sdCardData) {
+        ballotString = sdCardData;
+        System.out.println("Processed SD Card data: " + ballotString);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
