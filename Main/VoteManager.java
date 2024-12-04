@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import Managers.DeviceManager;
 import Screen.screenControl.ScreenController;
 
 public class VoteManager {
@@ -29,9 +28,6 @@ public class VoteManager {
     private boolean shutdown;
     private ArrayList<String> failed = new ArrayList<>();
 
-    // initialize device manager to control screen 
-    private DeviceManager deviceManager;
-
 
     public VoteManager() {
         // set up all device instances
@@ -49,21 +45,7 @@ public class VoteManager {
                 cardReader, latches);
         user = new User(cardReader);
         inputHandler = new InputHandler(this);
-
-        // set up the device manager 
-        private final DeviceManager deviceManager;
-
-        deviceManager = new DeviceManager(
-            new Printer("printerFile.txt"),
-            new SDCardDriver("sdCardDriver1.txt", Mode.R),
-            new TamperSensor(),
-            new CardReader(),
-            new Latch()
-        );
-
-        // Starting the screen
-        screenController = new ScreenController();
-        screenController.turnOn();
+        // this.screenManager = screenManager;
 
         monitor.startMonitorThread();
         user.startUserThread();
@@ -82,7 +64,8 @@ public class VoteManager {
                     inputHandler.setFailedList(failed);
                     // TODO: Machine has failed: notify admin, abort voter
                     admin.sendFailureNotification();
-                    screenController.showShutdownScreen();
+                    // TODO @ryan screenController logic
+                    // screenController.showShutdownScreen();
                     user.abort();
                 }
 

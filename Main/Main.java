@@ -8,28 +8,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
 
-import Managers.DeviceManager;
+import Screen.screenControl.ScreenController;
+import javafx.stage.Screen;
 
 public class Main {
-
-    // Example method to simulate the behavior
-    // public static void main(String[] args) throws IOException {
-    //     Printer printer = new Printer("printerFile.txt");
-    //     SDCardDriver sdCardDriver = new SDCardDriver("sdCardDriver.txt", Mode.R);
-    //     TamperSensor tamperSensor = new TamperSensor();
-    //     CardReader cardReader = new CardReader();
-    //     Latch latch = new Latch();
-
-    //     DeviceManager manager = new DeviceManager(printer, sdCardDriver, tamperSensor, cardReader, latch);
-
-    //     manager.connectToServer("localhost", 12345);
-    // }
-
-    public static void main(String[] args) {
-
-        VoteManager voteManager = new VoteManager();
-
-    }
 
     // Build in Classes
     private Printer pntr;
@@ -56,31 +38,57 @@ public class Main {
     String SDCardDriverFilePath;
     String printerFilePath;
 
-    /*
-     * TODO Do we want to initialize all these things here or wait until votemanager to do this
-     */
-    public Main(Printer printer, SDCardDriver sdCard, TamperSensor tamperSensor,
-                         CardReader cardReader, Latch latch) {
-        this.pntr = printer;
-        this.SDCard = sdCard;
-        this.TampSens = tamperSensor;
-        this.crdr = cardReader;
-        this.ltch = latch;
+    // Example method to simulate the behavior
+    // public static void main(String[] args) throws IOException {
+    // Printer printer = new Printer("printerFile.txt");
+    // SDCardDriver sdCardDriver = new SDCardDriver("sdCardDriver.txt", Mode.R);
+    // TamperSensor tamperSensor = new TamperSensor();
+    // CardReader cardReader = new CardReader();
+    // Latch latch = new Latch();
 
-        this.hasPrinterFailed = false;
-        this.hasTamperSensorFailed = false;
-        this.hasCardReaderFailed = false;
-        this.hasSDCardDriverFailed = false;
-        this.hasLatchSensorFailed = false;
+    // DeviceManager manager = new DeviceManager(printer, sdCardDriver,
+    // tamperSensor, cardReader, latch);
 
-        //this.isCardInserted = false;
-        this.SDCardDriverFilePath = null;
-        this.printerFilePath = null;
+    // manager.connectToServer("localhost", 12345);
+    // }
 
-        //this.cardID = null;
-        //this.cardType = null;
+    public static void main(String[] args) {
 
+        VoteManager voteManager = new VoteManager();
+
+        // Start screen controller on it's own thread
+        new Thread(() -> ScreenController.main(args)).start();
+
+        ScreenController screenController = ScreenController.getInstance();
+        screenController.connectToServer("localhost", 112233);
     }
+
+    /*
+     * TODO We are currently initializing all of these things in VoteManager. I
+     * think we want to keep it there.
+     */
+    // public Main(Printer printer, SDCardDriver sdCard, TamperSensor tamperSensor,
+    // CardReader cardReader, Latch latch) {
+    // this.pntr = printer;
+    // this.SDCard = sdCard;
+    // this.TampSens = tamperSensor;
+    // this.crdr = cardReader;
+    // this.ltch = latch;
+
+    // this.hasPrinterFailed = false;
+    // this.hasTamperSensorFailed = false;
+    // this.hasCardReaderFailed = false;
+    // this.hasSDCardDriverFailed = false;
+    // this.hasLatchSensorFailed = false;
+
+    // //this.isCardInserted = false;
+    // this.SDCardDriverFilePath = null;
+    // this.printerFilePath = null;
+
+    // //this.cardID = null;
+    // //this.cardType = null;
+
+    // }
 
     public void connectToServer(String host, int port) {
         try {
