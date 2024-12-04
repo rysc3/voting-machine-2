@@ -1,5 +1,7 @@
 package Main;
 
+import Screen.screenControl.ScreenController;
+
 import java.io.IOException;
 
 public class Voter {
@@ -10,6 +12,8 @@ public class Voter {
     Printer printer;
     BlankBallot blankBallot;
     Ballot myBallot;
+
+    private final String name = "voter";
 
     public Voter(String cardCode, SDCardDriver ballotSD, SDCardDriver voteSD1, SDCardDriver voteSD2, Printer printer) {
         this.cardCode = cardCode;
@@ -27,12 +31,13 @@ public class Voter {
 
                 // print for testing
                 ExtractInfoXML.printBallot(myBallot);
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
             // Todo
-            // startVoting();
+             startVoting();
 
             // when voting is done, call completedBallot()
 
@@ -42,7 +47,6 @@ public class Voter {
 
     private void startVoting() {
         // Todo: screen stuff?
-
         // Todo: here is some good references on how to display the ballot on the screen, i.e.
         //       use myBallot.electionName(), ArrayList<Propositions> props = ballot.propositions;
         //       etc
@@ -63,6 +67,10 @@ public class Voter {
         //            System.out.println("---------");
         //        }
         //    }
+
+        ScreenController controller = ScreenController.getInstance();
+        controller.turnOn();
+        controller.showProposition(myBallot.propositions().get(0), new String[]{"back", "next"});
     }
 
     /**

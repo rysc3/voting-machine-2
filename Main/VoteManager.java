@@ -2,7 +2,7 @@ package Main;
 
 import java.util.ArrayList;
 
-public class VoteManager {
+public class    VoteManager {
 
     private Printer printer;
     private SDCardDriver vDataSD1;
@@ -52,6 +52,8 @@ public class VoteManager {
 
     public void startManagerThread() {
         Thread managerThread = new Thread(() -> {
+
+            // Vote Manager Control loop
             while (true) {
                 failure = monitor.hasFailure();
                 if (failure) {
