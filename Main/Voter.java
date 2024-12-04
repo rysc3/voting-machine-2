@@ -1,10 +1,18 @@
 package Main;
 
 public class Voter {
-
+    String cardCode;
+    SDCardDriver ballotSD;
+    SDCardDriver voteSD1;
+    SDCardDriver voteSD2;
+    Printer printer;
     public Voter(String cardCode, SDCardDriver ballotSD, SDCardDriver voteSD1, SDCardDriver voteSD2, Printer printer) {
-        startVoterThread();
+        this.cardCode = cardCode;
+        this.ballotSD = ballotSD;
+        this.voteSD1 = voteSD1;
+        this.voteSD2 = voteSD2;
 
+        startVoterThread();
     }
 
     public void startVoterThread() {
