@@ -1,4 +1,4 @@
-package MainProject;
+package Main;
 
 public class Latch {
     private boolean isLocked;
