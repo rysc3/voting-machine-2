@@ -61,6 +61,8 @@ public class Main {
 
         ScreenController screenController = ScreenController.getInstance();
         screenController.connectToServer("localhost", 112233);
+
+        voteManager.startManagerThread();
     }
 
     /*
