@@ -16,7 +16,6 @@ public class Admin {
     public Admin(String cardCode, ArrayList<Latch> latches) {
         adminID = cardCode;
         latches.addAll(this.latches);
-        System.out.println("New admin... card code: " + adminID);
     }
 
     public void startAdminThread() {
@@ -31,6 +30,7 @@ public class Admin {
                 }
             }
         });
+        adminThread.start();
     }
 
     /*

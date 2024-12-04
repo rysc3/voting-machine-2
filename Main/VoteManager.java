@@ -62,31 +62,37 @@ public class VoteManager {
                     // get list of failed devices and give to inputHandler for user to see
                     failed = monitor.getFailed();
                     inputHandler.setFailedList(failed);
-                    // TODO: Machine has failed: notify admin, abort voter
-                    admin.sendFailureNotification();
+                    // Todo: Machine has failed: notify admin, abort voter
+                    if (admin != null) {
+                        // Todo: should NOT shut down automatically, should make only screen option for the admin be shutdown
+                        //admin.sendFailureNotification();
+                    }
+                    if (voter != null) {
+                        // abort voter thread, discard votes and do not erase card
+                    }
+
                     // TODO @ryan screenController logic
                     // screenController.showShutdownScreen();
-                    user.abort();
                 }
 
                 if (cardReader.isCardIn()) {
-                    if (cardReader.cardType().equals("Admin") && admin != null) {
+                    if (cardReader.cardType().equals("Admin") && admin == null) {
                         admin = new Admin(cardReader.cardCode(), latches);
                         admin.startAdminThread();
                     }
-                    if (cardReader.cardType().equals("Voter") && votingIsOpen) {
+                    if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
                         voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, printer);
                         voter.startVoterThread();
                     }
-                } else {
-                    admin = null;
                 }
 
                 if (user.isUserDone()) {
                     if (cardReader.cardType().equals("Voter")) {
                         cardReader.eraseCard();
+                        voter = null;
                     } else {
                         cardReader.ejectCard();
+                        admin = null;
                     }
                 }
 

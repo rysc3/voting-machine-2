@@ -14,7 +14,7 @@ public class User {
             while (true) {
                 //continuously check if a card has been inserted
                 if (cardReader.isCardIn()){
-                    System.out.println(cardReader.cardType() + " " + cardReader.cardCode());
+                    //System.out.println(cardReader.cardType() + " " + cardReader.cardCode());
                 }
                 // Todo: if card inserted: continuously check if user is done (do not eject card, that will be done by votemanager)
 
@@ -52,6 +52,7 @@ public class User {
     }
 
     /*
+     * Todo: get rid of this method. only Voter should abort. not User
      * Method to forcefully abort the user from voting. To be called 
      * when there was an error detected on the system.
      */
