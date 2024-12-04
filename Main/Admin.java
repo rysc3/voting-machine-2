@@ -8,7 +8,10 @@ public class Admin {
 
     private String adminID;
     private ArrayList<Latch> latches = new ArrayList<>();
+    private boolean votingIsOpen;
+    private boolean sessionIsOpen;
     private boolean adminDone;
+    private boolean shutdown;
 
     public Admin(String cardCode, ArrayList<Latch> latches) {
         adminID = cardCode;
@@ -31,23 +34,27 @@ public class Admin {
     }
 
     public void openVoting(){
-
+        votingIsOpen = true;
     }
 
     public void closeVoting(){
-
+        votingIsOpen = false;
     }
 
     public void openSession(){
-
+        sessionIsOpen = true;
     }
 
     public void closeSession(){
-
+        sessionIsOpen = false;
     }
 
     public void shutdown(){
+        shutdown = true;
+    }
 
+    public void confirmShutdown(){
+        shutdown = false;
     }
 
     public void openLatches(){
@@ -60,10 +67,6 @@ public class Admin {
         for(Latch latch : latches) {
             latch.lockLatch();
         }
-    }
-
-    public void confirmShutdown(){
-
     }
 
     public boolean isAdminDone() {

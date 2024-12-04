@@ -12,12 +12,18 @@ public class VoteManager {
     private SDCardDriver ballotSD;
     private TamperSensor tamperSensor;
     private CardReader cardReader;
-    private Latch latch;
+    private ArrayList<Latch> latches = new ArrayList<>();
+    private Latch latch1;
+    private Latch latch2;
     private Monitor monitor;
     private User user;
     private Admin admin;
+    private Voter voter;
     private InputHandler inputHandler;
     private boolean failure;
+    private boolean votingIsOpen;
+    private boolean sessionIsOpen;
+    private boolean shutdown;
     private ArrayList<String> failed = new ArrayList<>();
     private ScreenController screenController;
 
@@ -29,9 +35,12 @@ public class VoteManager {
         ballotSD = new SDCardDriver("testBallot.txt", 'R');
         tamperSensor = new TamperSensor();
         cardReader = new CardReader();
-        latch = new Latch();
+        latch1 = new Latch();
+        latch2 = new Latch();
+        latches.add(latch1);
+        latches.add(latch2);
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
-                cardReader, latch);
+                cardReader, latches);
         user = new User(cardReader);
         inputHandler = new InputHandler(this);
 
@@ -59,8 +68,12 @@ public class VoteManager {
 
                 if (cardReader.isCardIn()) {
                     if (cardReader.cardType().equals("Admin") && admin != null) {
-                        admin = new Admin(cardReader.cardCode());
+                        admin = new Admin(cardReader.cardCode(), latches);
                         admin.startAdminThread();
+                    }
+                    if (cardReader.cardType().equals("Voter") && votingIsOpen) {
+                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, printer);
+                        voter.startVoterThread();
                     }
                 } else {
                     admin = null;
