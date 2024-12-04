@@ -1,13 +1,25 @@
 package Main;
 
+import java.io.IOException;
+
 // part of Voter section in design diagram
 public class BlankBallot {
 
-    public BlankBallot() {
-        // Todo: THIS IS ALL QUESTIONABLE IDK IF IT WLL WORK
+    private SDCardDriver ballotSD;
+    private Ballot newBallot;
+
+    public BlankBallot(SDCardDriver ballotSD) throws IOException {
+        this.ballotSD = ballotSD;
+
         // read ballot info from ballot SD
-        // write info to XML file
-        // use makeBallotFromXML in ExtractInfoXML to create ballot object
-        // see line 178 /Managers/ScreenManager
+        String[] ballotArr = ballotSD.read();
+        String ballotString = ballotArr[0];
+
+        // create new ballot object
+        newBallot = ExtractInfoXML.makeBallotFromXML(ballotString);
+
+        // print for testing
+        ExtractInfoXML.printBallot(newBallot);
     }
+
 }
