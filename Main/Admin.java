@@ -39,6 +39,7 @@ public class Admin {
      */
     public void sendFailureNotification(){
         // Show an option on the menu to shutdown
+        System.out.println("(admin) SYSTEM FAILURE DETECTED. Shutting down system gracefully.");
         closeSession();
         closeVoting();
     }
