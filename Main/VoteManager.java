@@ -124,8 +124,8 @@ public class VoteManager {
         return cardReader;
     }
 
-    public Latch getLatch() {
-        return latch;
+    public ArrayList<Latch> getLatches() {
+        return latches;
     }
 
     public Monitor getMonitor() {
