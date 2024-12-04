@@ -13,7 +13,7 @@ public class InputHandler {
     private SDCardDriver ballotSD;
     private TamperSensor tamperSensor;
     private CardReader cardReader;
-    private Latch latch;
+    private ArrayList<Latch> latches = new ArrayList<>();
     private User user;
     private ArrayList<String> failed = new ArrayList<>();
     private ArrayList<String> cards = new ArrayList<>();
@@ -26,7 +26,7 @@ public class InputHandler {
         this.ballotSD = voteManager.getBallotSD();
         this.tamperSensor = voteManager.getTamperSensor();
         this.cardReader = voteManager.getCardReader();
-        this.latch = voteManager.getLatch();
+        this.latches = voteManager.getLatches();
         this.user = voteManager.getUser();
     }
 
@@ -74,7 +74,8 @@ public class InputHandler {
                     "[4] Ballot SD\n" +
                     "[5] Tamper Sensor\n" +
                     "[6] Card Reader\n" +
-                    "[7] Latch");
+                    "[7] Latch 1\n" +
+                    "[8] Latch 2");
             input = scan.nextLine();
             switch (input) {
                 // go back
@@ -93,8 +94,10 @@ public class InputHandler {
                 case "5" -> tamperSensor.setFailureStatus(true);
                 // set failure in card reader
                 case "6" -> cardReader.setFailureStatus(true);
-                // set failure in latch
-                case "7" -> latch.setFailureStatus(true);
+                // set failure in latch 1
+                case "7" -> latches.get(0).setFailureStatus(true);
+                // set failure in latch 2
+                case "8" -> latches.get(1).setFailureStatus(true);
                 default -> {
                     input = "";
                     System.out.println("Invalid input.");

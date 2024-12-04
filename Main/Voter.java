@@ -18,23 +18,21 @@ public class Voter {
     public void startVoterThread() {
         Thread voterThread = new Thread(() -> {
 
-            //startVoting(); ??
+            // BlankBallot myBallot = new BlankBallot();
+            // startVoting(); ??
 
+
+            // while not done
             while (true) {
-                //???
 
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                // exit when user submits ballot or error occurs
             }
         });
         voterThread.start();
     }
 
     private void startVoting() {
-
+        // screens stuff?
     }
 
     /**

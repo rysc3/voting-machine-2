@@ -44,6 +44,11 @@ public class VoteManager {
         user = new User(cardReader);
         inputHandler = new InputHandler(this);
 
+        // Todo: save ballot file to ballotSD?
+        // use testBallot.txt (in root directory)?
+        // write testBallot.txt to ballotSD?
+
+
         // Starting the screen
         screenController = new ScreenController();
         screenController.turnOn();
@@ -125,8 +130,8 @@ public class VoteManager {
         return cardReader;
     }
 
-    public Latch getLatch() {
-        return latch;
+    public ArrayList<Latch> getLatches() {
+        return latches;
     }
 
     public Monitor getMonitor() {
