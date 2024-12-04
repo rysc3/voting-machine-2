@@ -64,6 +64,9 @@ public class VoteManager {
                     failed = monitor.getFailed();
                     inputHandler.setFailedList(failed);
                     //TODO: Machine has failed: notify admin, abort voter
+                    admin.sendFailureNotification();
+                    screenController.showShutdownScreen();
+                    user.abort();
                 }
 
                 if (cardReader.isCardIn()) {

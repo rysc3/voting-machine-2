@@ -228,6 +228,15 @@ public class ScreenController extends Application {
 //        }
 //    }
 
+    /*
+     * @Keegan 
+     * Not necessarily sure if we need this function, but this is the function here in the controller being used to call the method in votescreen to show the 
+     * screen when a failure has been detected. I am calling this method here inside of votemanager when that failure is detected.
+     */
+    public static void showShutdownScreen(){
+        
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

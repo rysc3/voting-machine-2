@@ -51,4 +51,13 @@ public class User {
         return userDone;
     }
 
+    /*
+     * Method to forcefully abort the user from voting. To be called 
+     * when there was an error detected on the system.
+     */
+    public void abort(){
+        System.out.println("(user) SYSTEM FAILURE DETECTED, Ejecting card. Votes were cleared.");
+        removeCard(cardReader);
+    }
+
 }

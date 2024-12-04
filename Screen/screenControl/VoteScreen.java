@@ -199,4 +199,11 @@ public class VoteScreen {
         ));
     }
 
+    /*
+     * TODO @Keegan We need the logic here to show a shutdown screen. Should only have a single selectable option "Shut down" on it.
+     */
+    public void createShutdownScreen(){
+        
+    }
+
 }

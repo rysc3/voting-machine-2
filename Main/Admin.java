@@ -33,6 +33,16 @@ public class Admin {
         });
     }
 
+    /*
+     * Method used to notify the admin if some error has taken place causing the main 
+     * voting thread to halt. 
+     */
+    public void sendFailureNotification(){
+        // Show an option on the menu to shutdown
+        closeSession();
+        closeVoting();
+    }
+
     public void openVoting(){
         votingIsOpen = true;
     }
@@ -50,11 +60,7 @@ public class Admin {
     }
 
     public void shutdown(){
-        shutdown = true;
-    }
-
-    public void confirmShutdown(){
-        shutdown = false;
+        
     }
 
     public void openLatches(){
