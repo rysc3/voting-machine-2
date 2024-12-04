@@ -140,7 +140,7 @@ public class ScreenController extends Application {
                 try {
                     queue.put(0);  // Put the value in the queue when button is pressed
                 } catch (InterruptedException e) {
-                    System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
+                    System.out.println("Error: Screen Controller buttonhandler blockingqueue is not working");
                     e.printStackTrace();
                 }
             }
@@ -164,7 +164,7 @@ public class ScreenController extends Application {
         try {
             queue.put(Integer.parseInt(buttonId));  // Put the value in the queue when button is pressed
         } catch (InterruptedException e) {
-            System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
+            System.out.println("Error: Screen Controller buttonhandler blockingqueue is not working");
             e.printStackTrace();
         }
     }

@@ -1,7 +1,10 @@
 package Main;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import Managers.DeviceManager;
 import Screen.screenControl.ScreenController;
 
 public class VoteManager {
@@ -25,7 +28,10 @@ public class VoteManager {
     private boolean sessionIsOpen;
     private boolean shutdown;
     private ArrayList<String> failed = new ArrayList<>();
-    private ScreenController screenController;
+
+    // initialize device manager to control screen 
+    private DeviceManager deviceManager;
+
 
     public VoteManager() {
         // set up all device instances
@@ -44,6 +50,17 @@ public class VoteManager {
         user = new User(cardReader);
         inputHandler = new InputHandler(this);
 
+        // set up the device manager 
+        private final DeviceManager deviceManager;
+
+        deviceManager = new DeviceManager(
+            new Printer("printerFile.txt"),
+            new SDCardDriver("sdCardDriver1.txt", Mode.R),
+            new TamperSensor(),
+            new CardReader(),
+            new Latch()
+        );
+
         // Starting the screen
         screenController = new ScreenController();
         screenController.turnOn();
@@ -59,11 +76,11 @@ public class VoteManager {
         Thread managerThread = new Thread(() -> {
             while (true) {
                 failure = monitor.hasFailure();
-                if (failure){
+                if (failure) {
                     // get list of failed devices and give to inputHandler for user to see
                     failed = monitor.getFailed();
                     inputHandler.setFailedList(failed);
-                    //TODO: Machine has failed: notify admin, abort voter
+                    // TODO: Machine has failed: notify admin, abort voter
                     admin.sendFailureNotification();
                     screenController.showShutdownScreen();
                     user.abort();
@@ -82,11 +99,10 @@ public class VoteManager {
                     admin = null;
                 }
 
-                if(user.isUserDone()) {
-                    if(cardReader.cardType().equals("Voter")){
+                if (user.isUserDone()) {
+                    if (cardReader.cardType().equals("Voter")) {
                         cardReader.eraseCard();
-                    }
-                    else {
+                    } else {
                         cardReader.ejectCard();
                     }
                 }
