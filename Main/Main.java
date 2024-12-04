@@ -53,15 +53,18 @@ public class Main {
     // }
 
     public static void main(String[] args) {
+        /*
+         * This breaks because it tries to get the instance of the screenController before it has finished starting up, and ust gets a null pointer.
+         */
+        // new Thread(() -> ScreenController.main(args)).start();
 
-        VoteManager voteManager = new VoteManager();
-
-        // Start screen controller on it's own thread
-        new Thread(() -> ScreenController.main(args)).start();
-
+        // ScreenController screenController = ScreenController.getInstance();
+        // screenController.connectToServer("localhost", 112233);
+        ScreenController.launchScreenController(args);
         ScreenController screenController = ScreenController.getInstance();
-        screenController.connectToServer("localhost", 112233);
-
+        screenController.connectToServer("localhost", 420);
+        
+        VoteManager voteManager = new VoteManager();
         voteManager.startManagerThread();
     }
 

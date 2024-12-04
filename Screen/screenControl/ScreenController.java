@@ -50,6 +50,10 @@ public class ScreenController extends Application {
         return instance;
     }
 
+    public static void launchScreenController(String[] args) {
+        Application.launch(ScreenController.class, args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -79,7 +83,6 @@ public class ScreenController extends Application {
 
     public void showProposition(Proposition prop, String[] nav) {
         Platform.runLater(() -> {
-            // Create UI for displaying propositions
             VBox layout = new VBox();
             Button backButton = new Button(nav[0]);
             Button nextButton = new Button(nav[1]);
@@ -217,51 +220,6 @@ public class ScreenController extends Application {
         }
     }
 
-    /*
-     * TODO @sara same deal here with the ballot issue
-     */
-    // private void showScreen(Ballot.Proposition prop, String[] nav) {
-    //     VoteScreen voteScreen = new VoteScreen(prop, this, nav);
-    //     if (isOn) {
-    //         Scene scene = voteScreen.createVotingScreen();
-    //         primaryStage.setScene(scene);
-    //         primaryStage.setTitle("Voting System - Screen");
-    //         primaryStage.show();
-    //         if (prop.options().size() == 0) {
-    //             try {
-    //                 queue.put(0); // Put the value in the queue when button is pressed
-    //             } catch (InterruptedException e) {
-    //                 System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
-    //                 e.printStackTrace();
-    //             }
-    //         }
-    //     } else if (!isOn) {
-    //         Scene scene = voteScreen.drawOffScreen();
-    //         primaryStage.setScene(scene);
-    //         primaryStage.setTitle("Voting System");
-    //         primaryStage.show();
-    //     }
-    // }
-
-    protected void buttonHandler(ActionEvent event) {
-        Button clickedButton = (Button) event.getSource();
-        String buttonId = clickedButton.getId();
-        try {
-            queue.put(Integer.parseInt(buttonId)); // Put the value in the queue when button is pressed
-        } catch (InterruptedException e) {
-            System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
-            e.printStackTrace();
-        }
-    }
-
-    /*
-     * TODO @sara, looks like Ballot has been nuked. I think we'll need to fix this once Ballot is added back.
-     */
-    // public void showProposition(Ballot.Proposition prop, String[] nav) {
-
-    //     Platform.runLater(() -> instance.showScreen(prop, nav));
-    // }
-
     public void disconnect() {
         try {
             if (socket != null) {
@@ -271,14 +229,5 @@ public class ScreenController extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void processSDCardData(String sdCardData) {
-        ballotString = sdCardData;
-        System.out.println("Processed SD Card data: " + ballotString);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
