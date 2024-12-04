@@ -14,7 +14,7 @@ public class Test {
     private static ScreenController scr;
     private static Proposition proposition;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // Start the JavaFX application in a separate thread
         new Thread(() -> Application.launch(ScreenController.class)).start();
 
@@ -38,7 +38,7 @@ public class Test {
      *
      * All values populated
      */
-    private static void startCommandLineInput() {
+    private static void startCommandLineInput() throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("CLI ready. Type 'status' to print submitted votes, 'set_ballot' to set the ballot, or " +
                 "'unlock' to unlock the controller");

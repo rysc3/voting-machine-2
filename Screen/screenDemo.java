@@ -22,7 +22,7 @@ public class screenDemo {
     private static ScreenController scr;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         String text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<Voting-Machine>" +
                 "<electionName>election</electionName>" +

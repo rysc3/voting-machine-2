@@ -67,7 +67,7 @@ public class InputHandler {
         String input = "";
         while (input.equals("")) {
             System.out.println("Select a device to fail:\n" +
-                    "[0] <- Go Back" +
+                    "[0] <- Go Back\n" +
                     "[1] Printer\n" +
                     "[2] Voting Data SD1\n" +
                     "[3] Voting Data SD2\n" +
