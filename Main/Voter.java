@@ -138,29 +138,6 @@ public class Voter {
         }
     }
 
-    // Todo: here is some good references on how to display the ballot on the
-    // screen, i.e.
-    // use myBallot.electionName(), ArrayList<Propositions> props =
-    // ballot.propositions;
-    // etc
-    // public static void printBallot(Ballot ballot){
-    // System.out.println("Election name: " + ballot.electionName());
-    // System.out.println("start date: " + ballot.startDate());
-    // System.out.println("end date: " + ballot.endDate());
-    // System.out.println("start time: " + ballot.startForDay());
-    // System.out.println("end time: " + ballot.endForDay());
-    // for (Proposition p : ballot.propositions()) {
-    // System.out.println("---------");
-    // System.out.println("Proposition name: "+p.propName());
-    // System.out.println("Proposition description: "+p.propDesc());
-    // System.out.println("Select from: " + p.selectableOptions());
-    // for (Option o : p.options()) {
-    // System.out.println(" "+o.description() + " " + o.isSelected());
-    // }
-    // System.out.println("---------");
-    // }
-    // }
-
     /**
      * voter has completed ballot, record the votes
      */
