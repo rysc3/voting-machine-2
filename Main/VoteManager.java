@@ -21,35 +21,39 @@ public class    VoteManager {
     private Voter voter;
     private InputHandler inputHandler;
     private boolean failure;
-    private boolean votingIsOpen;
-    private boolean sessionIsOpen;
-    private boolean shutdown;
     private ArrayList<String> failed = new ArrayList<>();
 
 
     public VoteManager() {
         // set up all device instances
         printer = new Printer();
+
         vDataSD1 = new SDCardDriver("sdCardDriver1.txt", 'W');
         vDataSD2 = new SDCardDriver("sdCardDriver2.txt", 'W');
         ballotSD = new SDCardDriver("mainBallot.xml", 'R');
+
         tamperSensor = new TamperSensor();
         cardReader = new CardReader();
+
         latch1 = new Latch();
         latch2 = new Latch();
         latches.add(latch1);
         latches.add(latch2);
+
         monitor = new Monitor(printer, vDataSD1, vDataSD2, ballotSD, tamperSensor,
                 cardReader, latches);
-        user = new User(cardReader);
-        inputHandler = new InputHandler(this);
-        // this.screenManager = screenManager;
 
+        user = new User(cardReader);
+
+        inputHandler = new InputHandler(this);
+
+        /*
+         * Start all threads
+         */
         monitor.startMonitorThread();
         user.startUserThread();
         inputHandler.startInputHandlerThread();
         startManagerThread();
-
     }
 
     public void startManagerThread() {

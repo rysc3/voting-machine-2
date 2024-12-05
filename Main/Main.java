@@ -11,7 +11,6 @@ import java.util.Arrays;
 import Screen.screenControl.ScreenController;
 import javafx.application.Application;
 
-
 public class Main {
 
     // Build in Classes
@@ -43,10 +42,9 @@ public class Main {
         VoteManager voteManager = new VoteManager();
 
         // Start screen controller on it's own thread
-        //new Thread(() -> ScreenController.main(args)).start();
-        //ScreenController screenController = ScreenController.getInstance();
+        // new Thread(() -> ScreenController.main(args)).start();
+        // ScreenController screenController = ScreenController.getInstance();
         new Thread(() -> Application.launch(ScreenController.class)).start();
-
 
         // Wait for java to initialize the Controller instance
         while ((scr = ScreenController.getInstance()) == null) {
@@ -412,8 +410,10 @@ public class Main {
                 System.out.println("Choose an action:");
                 System.out.println("1. Information on " + deviceName);
                 System.out.println("2. Force " + deviceName + " Failure");
-                //System.out.println("3. Set " + deviceName + " File Path" + " !include a message, message will be file path!");
-                System.out.println("4. " + deviceName + " print line" + " !include a message, message will be printed!");
+                // System.out.println("3. Set " + deviceName + " File Path" + " !include a
+                // message, message will be file path!");
+                System.out
+                        .println("4. " + deviceName + " print line" + " !include a message, message will be printed!");
                 System.out.println("5. " + deviceName + " print empty line");
                 System.out.println("6. " + deviceName + " check failure status");
                 break;
@@ -422,17 +422,17 @@ public class Main {
                 setDeviceFailure(deviceName);
                 notifyServerDeviceMessage(deviceName, msg);
                 break;
-//            case 3:
-//                msg = "File Path " + message;
-//                pntr = new Printer(message);
-//                notifyServerDeviceMessage(deviceName, msg);
-//                break;
-            case 4: //TODO: Add function to print text
+            // case 3:
+            // msg = "File Path " + message;
+            // pntr = new Printer(message);
+            // notifyServerDeviceMessage(deviceName, msg);
+            // break;
+            case 4: // TODO: Add function to print text
                 msg = "printing " + message;
 
                 notifyServerDeviceMessage(deviceName, msg);
                 break;
-            case 5: //TODO: Add function to print empty line
+            case 5: // TODO: Add function to print empty line
                 msg = "printing empty Line";
 
                 notifyServerDeviceMessage(deviceName, msg);
