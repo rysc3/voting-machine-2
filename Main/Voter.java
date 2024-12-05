@@ -112,6 +112,7 @@ public class Voter {
      */
     private void completedBallot() {
         new VoteRecording(myBallot, cardCode, voteSD1, voteSD2, printer);
+
     }
 
     public void cleanup() {
