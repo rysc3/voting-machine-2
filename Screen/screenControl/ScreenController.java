@@ -19,8 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+
+import java.util.concurrent.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,14 +28,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ScreenController extends Application{
 
     private static ScreenController instance;
     private final BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
-    private TextArea logArea;
+
+    private final CopyOnWriteArrayList<BlockingQueue<Message>> listeners = new CopyOnWriteArrayList<>();
 
     private Stage primaryStage;
     private boolean isOn = false;
@@ -55,6 +55,23 @@ public class ScreenController extends Application{
         this.ballotString = null;
     }
 
+    // Method to register a listener
+    public void registerListener(BlockingQueue<Message> listenerQueue) {
+        listeners.add(listenerQueue);
+    }
+
+    // Notify all listeners when a message is sent
+    private void notifyListeners(Message message) {
+        for (BlockingQueue<Message> listener : listeners) {
+            try {
+                listener.put(message);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Error: Unable to notify listener.");
+            }
+        }
+    }
+
     public static synchronized ScreenController getInstance() {
         return instance;
     }
@@ -70,30 +87,28 @@ public class ScreenController extends Application{
         this.primaryStage = primaryStage;
 
         // Start a background thread to process messages
-        new Thread(this::processMessages).start();
+        //new Thread(this::processMessages).start(); //idk that we need this
 
         showWelcomeScreen();
     }
 
-    private void processMessages() {
-        while (true) {
-            try {
-                Message message = queue.poll(); // Non-blocking retrieval
-                if (message != null) {
-                    // Update the UI on the JavaFX Application Thread
-                    Platform.runLater(() -> System.out.println(
-                            "Processing message from " + message.getSender() + ": " + message.getContent() + "\n"
-                    ));
-                }
-                Thread.sleep(100); // Avoid tight looping
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-    }
-
-
+//    private void processMessages() {
+//        while (true) {
+//            try {
+//                Message message = queue.poll(); // Non-blocking retrieval
+//                if (message != null) {
+//                    // Update the UI on the JavaFX Application Thread
+//                    Platform.runLater(() -> System.out.println(
+//                            "Processing message from " + message.getSender() + ": " + message.getContent() + "\n"
+//                    ));
+//                }
+//                Thread.sleep(100); // Avoid tight looping
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//                break;
+//            }
+//        }
+//    }
 
 
     // === JavaFX UI Methods ===
@@ -126,123 +141,123 @@ public class ScreenController extends Application{
     }
 
     // === Socket Communication Methods ===
-    public void connectToServer(String host, int port) {
-        System.out.println("connectToServer Called"); //debug
-        new Thread(() -> {
-            try {
-                socket = new Socket(host, port);
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                System.out.println("Connected to server.");
-
-                listenToServer();
-            } catch (IOException e) {
-
-                System.out.println("connectToServer Failed"); //debug
-
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private void listenToServer() {
-        try {
-            String response;
-            while ((response = in.readLine()) != null) {
-                if (response.startsWith("SDCardData:")) {
-                    ballotString = response.substring("SDCardData:".length());
-                } else if (response.contains("ScreenManager:")) {
-                    parseAndPerformAction(response);
-                }
-            }
-        } catch (SocketException e) {
-            System.out.println("Connection to server lost.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void parseAndPerformAction(String message) {
-        try {
-            String[] parts = message.split(":");
-            if (parts.length == 3) {
-                String deviceName = parts[1].trim();
-                int choice = Integer.parseInt(parts[2].trim());
-                performAction(deviceName, choice, "");
-            } else if (parts.length == 4) {
-                String deviceName = parts[1].trim();
-                int choice = Integer.parseInt(parts[2].trim());
-                String extraMessage = parts[3].trim();
-                performAction(deviceName, choice, extraMessage);
-            } else {
-                System.out.println("Invalid message format: " + message);
-            }
-        } catch (Exception e) {
-            System.out.println("Error parsing message: " + e.getMessage());
-        }
-    }
-
-    public void performAction(String deviceName, int choice, String message) {
-        if (!deviceName.equals("Screen"))
-            return;
-
-        switch (choice) {
-            case 1: // Print info
-                System.out.println("Screen info requested.");
-                break;
-            case 2: // Simulate failure
-                hasScreenFailed = true;
-                sendMessage("Screen:Force Failure");
-                break;
-            case 3: // Turn on
-                turnOn();
-                sendMessage("Screen:Turn On");
-                break;
-            case 4: // Turn off
-                turnOff();
-                sendMessage("Screen:Turn Off");
-                break;
-            case 5: // Show ballot
-                processBallot(message);
-                break;
-            case 6: // Get ballot
-                sendBallot();
-                break;
-        }
-    }
-
-    private void processBallot(String message) {
-        ballot = ExtractInfoXML.makeBallotFromXML(ballotString);
-
-        Platform.runLater(() -> {
-            for (int i = 0; i < ballot.propositions().size();) {
-                Proposition prop = ballot.propositions().get(i);
-                String[] nav = i == 0 ? new String[] { "", "Next" }
-                        : i == ballot.propositions().size() - 1 ? new String[] { "Back", "End Voting" }
-                                : new String[] { "Back", "Next" };
-
-                showProposition(prop, nav);
-
-                try {
-                    Message result = waitForSelection();
-                    if (Integer.parseInt( result.getContent()) == 1)
-                        i++;
-                    else if (Integer.parseInt( result.getContent()) == 0 && i > 0)
-                        i--;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void sendBallot() {
-        if (ballot != null) {
-            sendMessage("Screen:Get Ballot:" + ExtractInfoXML.makeXMLFromBallot(ballot));
-        } else {
-            sendMessage("Screen:Get Ballot:null");
-        }
-    }
+//    public void connectToServer(String host, int port) {
+//        System.out.println("connectToServer Called"); //debug
+//        new Thread(() -> {
+//            try {
+//                socket = new Socket(host, port);
+//                out = new PrintWriter(socket.getOutputStream(), true);
+//                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                System.out.println("Connected to server.");
+//
+//                listenToServer();
+//            } catch (IOException e) {
+//
+//                System.out.println("connectToServer Failed"); //debug
+//
+//                e.printStackTrace();
+//            }
+//        }).start();
+//    }
+//
+//    private void listenToServer() {
+//        try {
+//            String response;
+//            while ((response = in.readLine()) != null) {
+//                if (response.startsWith("SDCardData:")) {
+//                    ballotString = response.substring("SDCardData:".length());
+//                } else if (response.contains("ScreenManager:")) {
+//                    parseAndPerformAction(response);
+//                }
+//            }
+//        } catch (SocketException e) {
+//            System.out.println("Connection to server lost.");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void parseAndPerformAction(String message) {
+//        try {
+//            String[] parts = message.split(":");
+//            if (parts.length == 3) {
+//                String deviceName = parts[1].trim();
+//                int choice = Integer.parseInt(parts[2].trim());
+//                performAction(deviceName, choice, "");
+//            } else if (parts.length == 4) {
+//                String deviceName = parts[1].trim();
+//                int choice = Integer.parseInt(parts[2].trim());
+//                String extraMessage = parts[3].trim();
+//                performAction(deviceName, choice, extraMessage);
+//            } else {
+//                System.out.println("Invalid message format: " + message);
+//            }
+//        } catch (Exception e) {
+//            System.out.println("Error parsing message: " + e.getMessage());
+//        }
+//    }
+//
+//    public void performAction(String deviceName, int choice, String message) {
+//        if (!deviceName.equals("Screen"))
+//            return;
+//
+//        switch (choice) {
+//            case 1: // Print info
+//                System.out.println("Screen info requested.");
+//                break;
+//            case 2: // Simulate failure
+//                hasScreenFailed = true;
+//                sendMessage("Screen:Force Failure");
+//                break;
+//            case 3: // Turn on
+//                turnOn();
+//                sendMessage("Screen:Turn On");
+//                break;
+//            case 4: // Turn off
+//                turnOff();
+//                sendMessage("Screen:Turn Off");
+//                break;
+//            case 5: // Show ballot
+//                processBallot(message);
+//                break;
+//            case 6: // Get ballot
+//                sendBallot();
+//                break;
+//        }
+//    }
+//
+//    private void processBallot(String message) {
+//        ballot = ExtractInfoXML.makeBallotFromXML(ballotString);
+//
+//        Platform.runLater(() -> {
+//            for (int i = 0; i < ballot.propositions().size();) {
+//                Proposition prop = ballot.propositions().get(i);
+//                String[] nav = i == 0 ? new String[] { "", "Next" }
+//                        : i == ballot.propositions().size() - 1 ? new String[] { "Back", "End Voting" }
+//                                : new String[] { "Back", "Next" };
+//
+//                showProposition(prop, nav);
+//
+//                try {
+//                    Message result = waitForSelection();
+//                    if (Integer.parseInt( result.getContent()) == 1)
+//                        i++;
+//                    else if (Integer.parseInt( result.getContent()) == 0 && i > 0)
+//                        i--;
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//    }
+//
+//    private void sendBallot() {
+//        if (ballot != null) {
+//            sendMessage("Screen:Get Ballot:" + ExtractInfoXML.makeXMLFromBallot(ballot));
+//        } else {
+//            sendMessage("Screen:Get Ballot:null");
+//        }
+//    }
 
     public void sendMessage(String message) {
         if (out != null) {
@@ -279,10 +294,12 @@ public class ScreenController extends Application{
     protected void buttonHandler(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
         String buttonId = clickedButton.getId();
+        Message message = new Message("navBtn", buttonId);
         try {
-            queue.put(new Message("navBtn", buttonId)); // Put the value in the queue when button is pressed
+            queue.put(message); // Original queue handling
+            notifyListeners(message); // Notify all listeners
         } catch (InterruptedException e) {
-            System.out.println("Error: Screen Controller buttonhandler blockingqueue is fucked up");
+            System.out.println("Error: Unable to process button click.");
             e.printStackTrace();
         }
     }
@@ -295,21 +312,21 @@ public class ScreenController extends Application{
     //     Platform.runLater(() -> instance.showScreen(prop, nav));
     // }
 
-    public void disconnect() {
-        try {
-            if (socket != null) {
-                socket.close();
-                System.out.println("Disconnected from server.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void processSDCardData(String sdCardData) {
-        ballotString = sdCardData;
-        System.out.println("Processed SD Card data: " + ballotString);
-    }
+//    public void disconnect() {
+//        try {
+//            if (socket != null) {
+//                socket.close();
+//                System.out.println("Disconnected from server.");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void processSDCardData(String sdCardData) {
+//        ballotString = sdCardData;
+//        System.out.println("Processed SD Card data: " + ballotString);
+//    }
 
     public static void main(String[] args) {
         launch(args);

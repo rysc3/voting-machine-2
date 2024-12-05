@@ -67,10 +67,12 @@ public class VoteScreen {
         Label titleLabel = new Label(proposition.propName());
         titleLabel.setFont(Font.font("Georgia", FontWeight.EXTRA_BOLD, 28));
         titleLabel.setStyle("-fx-text-fill: black;");
+        titleLabel.setWrapText(true);
 
         Label descriptionLabel = new Label(proposition.propDesc());
         descriptionLabel.setFont(Font.font("Times New Roman", FontWeight.SEMI_BOLD, 20));
         descriptionLabel.setStyle("-fx-text-fill: black;");
+        descriptionLabel.setWrapText(true);
 
         String numOptionString = "";
         if (!proposition.options().isEmpty()) {
@@ -80,6 +82,7 @@ public class VoteScreen {
         Label numOptionsLabel = new Label(numOptionString);
         numOptionsLabel.setFont(Font.font("Times New Roman", FontWeight.MEDIUM, 14));
         numOptionsLabel.setStyle("-fx-text-fill: black;");
+        numOptionsLabel.setWrapText(true);
 
         FlowPane optionsBox = new FlowPane(5, 5);
         optionsBox.setAlignment(Pos.CENTER);

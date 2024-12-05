@@ -70,7 +70,7 @@ public class Main {
         }
 
 
-        scr.connectToServer("localhost", 123);
+        //scr.connectToServer("localhost", 123);
 
         voteManager.startManagerThread();
     }
