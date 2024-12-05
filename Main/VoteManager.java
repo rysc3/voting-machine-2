@@ -1,5 +1,7 @@
 package Main;
 
+import Screen.screenControl.ScreenController;
+
 import java.util.ArrayList;
 
 public class    VoteManager {
@@ -27,7 +29,7 @@ public class    VoteManager {
 
     public VoteManager() {
         // set up all device instances
-        printer = new Printer("printerFile.txt");
+        printer = new Printer();
         vDataSD1 = new SDCardDriver("sdCardDriver1.txt", 'W');
         vDataSD2 = new SDCardDriver("sdCardDriver2.txt", 'W');
         ballotSD = new SDCardDriver("mainBallot.xml", 'R');
@@ -81,7 +83,7 @@ public class    VoteManager {
                     if (cardReader.cardType().equals("Voter") && voter == null) {
                         //Todo: re-enable line below and remove this ^ line used for testing
                     //if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
-                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, printer);
+                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, ScreenController.getInstance().getPrinterWindow());
                         voter.startVoterThread();
                     }
                 }
