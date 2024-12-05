@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
 public class Voter {
     String cardCode;
     SDCardDriver ballotSD;
@@ -41,41 +40,42 @@ public class Voter {
                 // print for testing
                 ExtractInfoXML.printBallot(myBallot);
 
-                String[] backNextNavBtns = new String[]{"back", "next"};
-
+                String[] backNextNavBtns = new String[] { "back", "next" };
 
                 // Start voting process
                 ScreenController controller = ScreenController.getInstance(); // get screen instance
-                controller.turnOn(); //turn the screen on
+                controller.turnOn(); // turn the screen on
                 controller.showProposition(myBallot.propositions().get(0), backNextNavBtns);
                 controller.registerListener(receivingQueue);
 
                 boolean votingComplete = false;
                 int currentPropositionIndex = 0;
 
-                //TODO: Check this voting loop, not sure if its entierly  correct
+                // TODO: Check this voting loop, not sure if its entierly correct
                 while (!votingComplete) {
                     // Wait for messages from ScreenController
                     Message message = receivingQueue.take(); // Blocking call to wait for message
 
                     // Process the received message
                     switch (message.getContent()) {
-                        case "1": //Next
+                        case "1": // Next
                             // Move to the next proposition, if available
                             if (currentPropositionIndex < myBallot.propositions().size() - 1) {
                                 currentPropositionIndex++;
-                                controller.showProposition(myBallot.propositions().get(currentPropositionIndex), backNextNavBtns);
+                                controller.showProposition(myBallot.propositions().get(currentPropositionIndex),
+                                        backNextNavBtns);
                             } else {
                                 System.out.println("No more propositions. Voting complete.");
                                 votingComplete = true;
                             }
                             break;
 
-                        case "0": //Back
+                        case "0": // Back
                             // Move to the previous proposition, if available
                             if (currentPropositionIndex > 0) {
                                 currentPropositionIndex--;
-                                controller.showProposition(myBallot.propositions().get(currentPropositionIndex), backNextNavBtns);
+                                controller.showProposition(myBallot.propositions().get(currentPropositionIndex),
+                                        backNextNavBtns);
                             } else {
                                 System.out.println("Already at the first proposition.");
                             }
@@ -102,9 +102,6 @@ public class Voter {
 
     private void startVoting() {
         // Todo: screen stuff?
-
-
-
 
         new Thread(() -> {
             while (true) {
@@ -141,27 +138,28 @@ public class Voter {
         }
     }
 
-
-        // Todo: here is some good references on how to display the ballot on the screen, i.e.
-        //       use myBallot.electionName(), ArrayList<Propositions> props = ballot.propositions;
-        //       etc
-        // public static void printBallot(Ballot ballot){
-        //        System.out.println("Election name: " + ballot.electionName());
-        //        System.out.println("start date: " + ballot.startDate());
-        //        System.out.println("end date: " + ballot.endDate());
-        //        System.out.println("start time: " + ballot.startForDay());
-        //        System.out.println("end time: " + ballot.endForDay());
-        //        for (Proposition p : ballot.propositions()) {
-        //            System.out.println("---------");
-        //            System.out.println("Proposition name: "+p.propName());
-        //            System.out.println("Proposition description: "+p.propDesc());
-        //            System.out.println("Select from: " + p.selectableOptions());
-        //            for (Option o : p.options()) {
-        //                System.out.println("   "+o.description() + "  " + o.isSelected());
-        //            }
-        //            System.out.println("---------");
-        //        }
-        //    }
+    // Todo: here is some good references on how to display the ballot on the
+    // screen, i.e.
+    // use myBallot.electionName(), ArrayList<Propositions> props =
+    // ballot.propositions;
+    // etc
+    // public static void printBallot(Ballot ballot){
+    // System.out.println("Election name: " + ballot.electionName());
+    // System.out.println("start date: " + ballot.startDate());
+    // System.out.println("end date: " + ballot.endDate());
+    // System.out.println("start time: " + ballot.startForDay());
+    // System.out.println("end time: " + ballot.endForDay());
+    // for (Proposition p : ballot.propositions()) {
+    // System.out.println("---------");
+    // System.out.println("Proposition name: "+p.propName());
+    // System.out.println("Proposition description: "+p.propDesc());
+    // System.out.println("Select from: " + p.selectableOptions());
+    // for (Option o : p.options()) {
+    // System.out.println(" "+o.description() + " " + o.isSelected());
+    // }
+    // System.out.println("---------");
+    // }
+    // }
 
     /**
      * voter has completed ballot, record the votes
