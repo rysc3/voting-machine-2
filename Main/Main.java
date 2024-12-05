@@ -101,6 +101,7 @@ public class Main {
     // //this.cardID = null;
     // //this.cardType = null;
 
+    
     // }
 
     public void connectToServer(String host, int port) {
