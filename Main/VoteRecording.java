@@ -1,5 +1,7 @@
 package Main;
 
+import Screen.screenControl.ScreenController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +19,8 @@ public class VoteRecording {
         this.voteSD1 = voteSD1;
         this.voteSD2 = voteSD2;
         this.printer = printer;
-
         recordVotes();
+        printBallot();
     }
 
     private List<String> ballotToListString() {
@@ -45,13 +47,17 @@ public class VoteRecording {
         return lines;
     }
 
+    private void printBallot(){
+        List<String> ballotStr = ballotToListString();
+        printer.printBatch(ballotStr);
+    }
+
     private void recordVotes() {
         List<String> ballotLines = ballotToListString();
 
         for (String line : ballotLines) {
             voteSD1.write(line);
             voteSD2.write(line);
-            printer.printLine(line);
         }
     }
 }

@@ -1,10 +1,6 @@
 package Screen.screenControl;
 
-import Main.Ballot;
-import Main.ExtractInfoXML;
-import Main.Option;
-import Main.Proposition;
-import Main.Message;
+import Main.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -34,6 +30,7 @@ public class ScreenController extends Application{
 
     private static ScreenController instance;
     private final BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
+    private Printer printerWindow;
 
     private final CopyOnWriteArrayList<BlockingQueue<Message>> listeners = new CopyOnWriteArrayList<>();
 
@@ -50,9 +47,13 @@ public class ScreenController extends Application{
 
 
     public ScreenController() {
-        instance = this; // Singleton pattern
+        instance = this;
         this.hasScreenFailed = false;
         this.ballotString = null;
+    }
+
+    public Printer getPrinterWindow() {
+        return printerWindow;
     }
 
     // Method to register a listener
@@ -90,6 +91,19 @@ public class ScreenController extends Application{
         //new Thread(this::processMessages).start(); //idk that we need this
 
         showWelcomeScreen();
+
+        // Open secondary Printer window
+        openPrinterWindow();
+    }
+
+    private void openPrinterWindow() {
+        printerWindow = new Printer(); // Create the Printer window
+        printerWindow.start(new Stage()); // Launch the Printer window in a new Stage
+
+
+        for (int i = 0; i < 50; i++) {
+            printerWindow.printNewLine();
+        }
     }
 
 //    private void processMessages() {

@@ -24,6 +24,7 @@ public class Voter {
         this.ballotSD = ballotSD;
         this.voteSD1 = voteSD1;
         this.voteSD2 = voteSD2;
+        this.printer = printer;
     }
 
     public BlockingQueue<Message> getReceivingQueue() {
@@ -52,7 +53,7 @@ public class Voter {
                 boolean votingComplete = false;
                 int currentPropositionIndex = 0;
 
-                //TODO: Fix this ai generated ass voting loop
+                //TODO: Check this voting loop, not sure if its entierly  correct
                 while (!votingComplete) {
                     // Wait for messages from ScreenController
                     Message message = receivingQueue.take(); // Blocking call to wait for message
