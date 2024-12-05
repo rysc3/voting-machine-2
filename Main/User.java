@@ -12,12 +12,12 @@ public class User {
     public void startUserThread() {
         Thread userThread = new Thread(() -> {
             while (true) {
-                //continuously check if a card has been inserted
-                if (cardReader.isCardIn()){
-                    //System.out.println(cardReader.cardType() + " " + cardReader.cardCode());
+                // continuously check if a card has been inserted
+                if (cardReader.isCardIn()) {
+                    // System.out.println(cardReader.cardType() + " " + cardReader.cardCode());
                 }
-                // Todo: if card inserted: continuously check if user is done (do not eject card, that will be done by votemanager)
-
+                // Todo: if card inserted: continuously check if user is done (do not eject
+                // card, that will be done by votemanager)
 
                 try {
                     Thread.sleep(500);
@@ -32,8 +32,7 @@ public class User {
     public void removeCard(CardReader reader) {
         if (!reader.isCardIn()) {
             System.out.println("No cards inserted.");
-        }
-        else {
+        } else {
             reader.ejectCard();
         }
     }
@@ -41,8 +40,7 @@ public class User {
     public void eraseCard(CardReader reader) {
         if (!reader.isCardIn()) {
             System.out.println("No cards inserted.");
-        }
-        else {
+        } else {
             reader.eraseCard();
         }
     }
@@ -53,10 +51,10 @@ public class User {
 
     /*
      * Todo: get rid of this method. only Voter should abort. not User
-     * Method to forcefully abort the user from voting. To be called 
+     * Method to forcefully abort the user from voting. To be called
      * when there was an error detected on the system.
      */
-    public void abort(){
+    public void abort() {
         System.out.println("(user) SYSTEM FAILURE DETECTED, Ejecting card. Votes were cleared.");
         removeCard(cardReader);
     }
