@@ -1,0 +1,37 @@
+Voter ID: V44192268
+Election name: 2024 Civic Impact Election
+Start date: 2024-11-12
+End date: 2024-11-18
+Start time: 07:00
+End time: 19:00
+Proposition name: Green Energy Initiative
+Proposition description: Shall the city allocate 10% of its annual budget to renewable energy projects, such as solar and wind energy?
+Select from: 1
+Yes true
+No false
+Proposition name: Community Wellness Fund
+Proposition description: Should the city establish a $2 million fund to improve mental health services, public parks, and community centers?
+Select from: 1
+Yes true
+No false
+Proposition name: Urban Development Program
+Proposition description: How should the city prioritize urban development projects over the next five years?
+Select from: 2
+Affordable Housing Initiatives false
+Expansion of Public Transit false
+Revitalization of Downtown Areas false
+Creation of Green Spaces true
+Support for Small Businesses true
+Proposition name: Proposition 4: Education Technology Upgrade
+Proposition description: Shall the school district invest in upgrading classroom technology, including computers and smartboards, at an estimated cost of $5 million?
+Select from: 1
+Yes true
+No false
+Proposition name: Public Safety Modernization
+Proposition description: Which public safety measures should receive priority funding?
+Select from: 3
+Additional Police Training Programs false
+Fire Department Equipment Upgrades false
+Improved Emergency Response Systems false
+Community Policing Initiatives false
+Cybersecurity Infrastructure true
