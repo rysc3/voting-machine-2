@@ -11,7 +11,8 @@ public class VoteRecording {
     private SDCardDriver voteSD2;
     private Printer printer;
 
-    public VoteRecording(Ballot finishedBallot, String cardCode, SDCardDriver voteSD1, SDCardDriver voteSD2, Printer printer) {
+    public VoteRecording(Ballot finishedBallot, String cardCode, SDCardDriver voteSD1, SDCardDriver voteSD2,
+            Printer printer) {
         this.finishedBallot = finishedBallot;
         this.cardCode = cardCode;
         this.voteSD1 = voteSD1;
@@ -45,7 +46,7 @@ public class VoteRecording {
         return lines;
     }
 
-    private void printBallot(){
+    private void printBallot() {
         List<String> ballotStr = ballotToListString();
         printer.printBatch(ballotStr);
     }

@@ -1,4 +1,5 @@
 package Main;
+
 public class Option {
     private final String description;
     private boolean selected = false;
@@ -8,7 +9,7 @@ public class Option {
         this.selected = selected;
     }
 
-    public String description(){
+    public String description() {
         return description;
     }
 
@@ -19,6 +20,7 @@ public class Option {
     public void select() {
         selected = true;
     }
+
     public void unselect() {
         selected = false;
     }

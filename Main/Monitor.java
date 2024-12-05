@@ -15,8 +15,8 @@ public class Monitor {
     private ArrayList<String> failed;
 
     public Monitor(Printer printer, SDCardDriver vDataSD1, SDCardDriver vDataSD2,
-                   SDCardDriver ballotSD, TamperSensor tamperSensor,
-                   CardReader cardReader, ArrayList<Latch> latches) {
+            SDCardDriver ballotSD, TamperSensor tamperSensor,
+            CardReader cardReader, ArrayList<Latch> latches) {
         this.printer = printer;
         this.vDataSD1 = vDataSD1;
         this.vDataSD2 = vDataSD2;
@@ -50,7 +50,7 @@ public class Monitor {
                 if (vDataSD2.getFailureStatus() && !failed.contains("SD2")) {
                     failed.add("SD2");
                 }
-                if (ballotSD.getFailureStatus() && !failed.contains("BallotSD")){
+                if (ballotSD.getFailureStatus() && !failed.contains("BallotSD")) {
                     failed.add("BallotSD");
                 }
                 if (tamperSensor.getFailureStatus() && !failed.contains("TamperSensor")) {

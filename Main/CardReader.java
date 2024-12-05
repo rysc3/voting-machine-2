@@ -1,6 +1,5 @@
 package Main;
 
-
 public class CardReader {
     private boolean cardInserted;
     private String cardCode;
@@ -32,17 +31,14 @@ public class CardReader {
         }
     }
 
-
     private void setCardInsert(boolean insert) {
         this.cardInserted = insert;
     }
-
 
     // Check if a card is inserted
     public boolean isCardIn() {
         return cardInserted;
     }
-
 
     // Determine the type of card based on the first letter of the code (V or A)
     public String cardType() {
@@ -94,12 +90,12 @@ public class CardReader {
     }
 
     // force failure on the card reader
-    public void setFailureStatus(boolean in){
+    public void setFailureStatus(boolean in) {
         this.hasFailure = in;
     }
 
     // Check if the card reader has failure
-    public boolean getFailureStatus(){
+    public boolean getFailureStatus() {
         return hasFailure;
     }
 

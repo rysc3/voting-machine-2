@@ -1,20 +1,14 @@
 package Main;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import Screen.screenControl.ScreenController;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Printer{
+public class Printer {
 
     private boolean hasFailed;
     private VBox page;
@@ -41,12 +35,11 @@ public class Printer{
         primaryStage.setTitle("Printer");
         primaryStage.show();
     }
-    //scrollPane.setVvalue(1.0); // 1.0 represents the bottom of the ScrollPane
+    // scrollPane.setVvalue(1.0); // 1.0 represents the bottom of the ScrollPane
 
-
-    //TODO: Implement the printing of a provided VoteRecording
-    public void printBallot(VoteRecording finalBallot){
-        //Print Lines Slowly
+    // TODO: Implement the printing of a provided VoteRecording
+    public void printBallot(VoteRecording finalBallot) {
+        // Print Lines Slowly
         new Thread(() -> {
             for (int i = 1; i <= 50; i++) {
                 int count = i;
@@ -64,12 +57,12 @@ public class Printer{
         }).start();
     }
 
-    //TODO: Add Print Line Function
-    public void printLine(String text){
+    // TODO: Add Print Line Function
+    public void printLine(String text) {
 
     }
 
-    //TODO: Add print newline function
+    // TODO: Add print newline function
     public void printNewLine() {
         javafx.application.Platform.runLater(() -> {
             page.getChildren().add(new Text(""));
@@ -77,10 +70,9 @@ public class Printer{
         });
     }
 
-
-    public void printBatch(List<String> strings){
+    public void printBatch(List<String> strings) {
         new Thread(() -> {
-            for (String ballotLine : strings){
+            for (String ballotLine : strings) {
                 try {
                     Thread.sleep(500); // Simulate delay
                 } catch (InterruptedException e) {
@@ -95,7 +87,6 @@ public class Printer{
             }
         }).start();
     }
-
 
     public void setFailureStatus(boolean fail) {
         hasFailed = fail;

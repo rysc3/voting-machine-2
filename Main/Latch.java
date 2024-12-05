@@ -12,7 +12,9 @@ public class Latch {
         return isLocked;
     }
 
-    public void unlockLatch() { this.isLocked = false; }
+    public void unlockLatch() {
+        this.isLocked = false;
+    }
 
     public void lockLatch() {
         this.isLocked = true;

@@ -6,9 +6,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,10 +14,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class ExtractInfoXML {
 
-    public static void printBallot(Ballot ballot){
+    public static void printBallot(Ballot ballot) {
         System.out.println("Election name: " + ballot.electionName());
         System.out.println("start date: " + ballot.startDate());
         System.out.println("end date: " + ballot.endDate());
@@ -28,11 +28,11 @@ public class ExtractInfoXML {
         System.out.println("end time: " + ballot.endForDay());
         for (Proposition p : ballot.propositions()) {
             System.out.println("---------");
-            System.out.println("Proposition name: "+p.propName());
-            System.out.println("Proposition description: "+p.propDesc());
+            System.out.println("Proposition name: " + p.propName());
+            System.out.println("Proposition description: " + p.propDesc());
             System.out.println("Select from: " + p.selectableOptions());
             for (Option o : p.options()) {
-                System.out.println("   "+o.description() + "  " + o.isSelected());
+                System.out.println("   " + o.description() + "  " + o.isSelected());
             }
             System.out.println("---------");
         }
@@ -41,7 +41,7 @@ public class ExtractInfoXML {
     public static void main(String[] args) {
         Scanner scanner = null;
         try {
-            scanner = new Scanner( new File("test.xml") );
+            scanner = new Scanner(new File("test.xml"));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -58,25 +58,25 @@ public class ExtractInfoXML {
         printBallot(b);
     }
 
-    public static String makeXMLFromBallot(Ballot ballot){
+    public static String makeXMLFromBallot(Ballot ballot) {
         String xml = "";
-        xml +=  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+        xml += "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
         xml += "<Voting-Machine>";
-        xml += "<electionName>"+ ballot.electionName() + "</electionName>";
-        xml += "<startDate>"+ ballot.startDate() + "</startDate>";
-        xml += "<endDate>"+ ballot.endDate() + "</endDate>";
-        xml += "<startForDay>"+ ballot.startForDay() + "</startForDay>";
-        xml += "<endForDay>"+ ballot.endForDay() + "</endForDay>";
-        for (Proposition prop : ballot.propositions()){
+        xml += "<electionName>" + ballot.electionName() + "</electionName>";
+        xml += "<startDate>" + ballot.startDate() + "</startDate>";
+        xml += "<endDate>" + ballot.endDate() + "</endDate>";
+        xml += "<startForDay>" + ballot.startForDay() + "</startForDay>";
+        xml += "<endForDay>" + ballot.endForDay() + "</endForDay>";
+        for (Proposition prop : ballot.propositions()) {
             xml += "<proposition>";
-            xml += "<propName>"+ prop.propName() + "</propName>";
-            xml += "<propDesc>"+ prop.propDesc() + "</propDesc>";
+            xml += "<propName>" + prop.propName() + "</propName>";
+            xml += "<propDesc>" + prop.propDesc() + "</propDesc>";
 
             for (Option op : prop.options()) {
                 xml += "<option>" + op.description() + "</option>";
                 xml += "<optionSelection>" + op.isSelected() + "</optionSelection>";
             }
-            xml += "<numChoices>"+ prop.selectableOptions() + "</numChoices>";
+            xml += "<numChoices>" + prop.selectableOptions() + "</numChoices>";
             xml += "</proposition>";
         }
 
@@ -84,7 +84,7 @@ public class ExtractInfoXML {
         return xml;
     }
 
-    public static Ballot makeBallotFromXML(String xml){
+    public static Ballot makeBallotFromXML(String xml) {
         // Load and parse the XML file
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docbuilder = null;
@@ -136,12 +136,11 @@ public class ExtractInfoXML {
 
             int numChoices = Integer.parseInt(proposition.getElementsByTagName("numChoices").item(0).getTextContent());
             // Create a new Proposition record and add it to the list
-            Proposition propositionRecord = new Proposition(propName, propDesc,numChoices, optionsList);
+            Proposition propositionRecord = new Proposition(propName, propDesc, numChoices, optionsList);
             propositionsList.add(propositionRecord);
         }
 
-        return new Ballot(electionName, LocalDate.parse(startDate),LocalDate.parse(endDate),
-                LocalTime.parse(startForDay),LocalTime.parse(endForDay),propositionsList);
+        return new Ballot(electionName, LocalDate.parse(startDate), LocalDate.parse(endDate),
+                LocalTime.parse(startForDay), LocalTime.parse(endForDay), propositionsList);
     }
 }
-

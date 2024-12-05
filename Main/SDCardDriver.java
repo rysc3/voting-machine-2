@@ -7,8 +7,8 @@ import java.util.List;
 public class SDCardDriver {
 
     private File file;
-    private boolean initialized = false ;
-    private boolean corrupted = false ;
+    private boolean initialized = false;
+    private boolean corrupted = false;
     private BufferedWriter writer;
     private BufferedReader reader;
     private Mode mode;
@@ -17,7 +17,7 @@ public class SDCardDriver {
     public enum Mode {
         R, W
     }
-    
+
     public SDCardDriver(String filePath, char mode) {
         this.file = new File(filePath);
         if (mode == 'R') {
@@ -39,29 +39,30 @@ public class SDCardDriver {
                 throw new IOException("File not found for reading: " + file.getAbsolutePath());
             }
             reader = new BufferedReader(new FileReader(file));
-            reader.mark(0);  // Mark the current position
+            reader.mark(0); // Mark the current position
         } else {
             // Check if file exists for write mode, if not create it
             if (!file.exists()) {
                 boolean isCreated = file.createNewFile();
                 if (isCreated) {
-                    //System.out.println("File created: " + file.getAbsolutePath());
+                    // System.out.println("File created: " + file.getAbsolutePath());
                 } else {
                     throw new IOException("Failed to create file: " + file.getAbsolutePath());
                 }
             }
-            writer = new BufferedWriter(new FileWriter(file, true));  // 'true' for appending
+            writer = new BufferedWriter(new FileWriter(file, true)); // 'true' for appending
         }
     }
 
     public void closeFile() throws IOException {
 
-        if(reader != null){
+        if (reader != null) {
             reader.close();
         }
-        {if (writer != null){
-            writer.close();
-        }
+        {
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 
@@ -93,7 +94,6 @@ public class SDCardDriver {
         return lines.toArray(new String[0]);
     }
 
-
     public void write(String line) {
         if (mode == Mode.R) {
             throw new IllegalStateException("SDCardDriver is not in write mode. Trying to access Write Mode.");
@@ -106,8 +106,9 @@ public class SDCardDriver {
         }
     }
 
-    // checks for failure if file exist, or SDCard has been initialized, and is not corrupted
-    public boolean checkForFailure(){
+    // checks for failure if file exist, or SDCard has been initialized, and is not
+    // corrupted
+    public boolean checkForFailure() {
         return !initialized && !file.exists() && corrupted;
     }
 
@@ -116,7 +117,7 @@ public class SDCardDriver {
     }
 
     public boolean getFailureStatus() {
-        //hasFailed = checkForFailure();
+        // hasFailed = checkForFailure();
         return hasFailed;
     }
 

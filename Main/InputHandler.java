@@ -111,12 +111,11 @@ public class InputHandler {
     }
 
     private void printFailed() {
-        if (!failed.isEmpty()){
+        if (!failed.isEmpty()) {
             for (String failure : failed) {
                 System.out.println(failure + " has failed!");
             }
-        }
-        else {
+        } else {
             System.out.println("No failed devices.");
         }
     }
@@ -125,9 +124,9 @@ public class InputHandler {
         String cardNumber;
         String input = "";
         while (input.equals("")) {
-        System.out.println("[0] <- Go Back\n" +
-                "[1] Admin card\n" +
-                "[2] Voter card");
+            System.out.println("[0] <- Go Back\n" +
+                    "[1] Admin card\n" +
+                    "[2] Voter card");
             input = scan.nextLine();
             switch (input) {
                 case "0" -> {
@@ -187,7 +186,7 @@ public class InputHandler {
                     }
                     // If card index is in range, insert it
                     if (inputNumber > 0 && inputNumber <= numCards) {
-                        String card = cards.get(inputNumber-1);
+                        String card = cards.get(inputNumber - 1);
                         cardReader.insertCard(card);
                         break;
                     } else {
@@ -207,19 +206,17 @@ public class InputHandler {
             System.out.println(cardReader.cardCode() + " has been removed.");
             cards.remove(cardReader.cardCode());
             user.eraseCard(cardReader);
-        }
-        else {
+        } else {
             user.removeCard(cardReader);
         }
     }
 
     private void printCards() {
-        if (!cards.isEmpty()){
+        if (!cards.isEmpty()) {
             for (String card : cards) {
-                System.out.println("[" + (cards.indexOf(card)+1) + "] " + card);
+                System.out.println("[" + (cards.indexOf(card) + 1) + "] " + card);
             }
-        }
-        else {
+        } else {
             System.out.println("No cards available.");
         }
     }
