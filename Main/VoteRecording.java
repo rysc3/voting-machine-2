@@ -18,8 +18,8 @@ public class VoteRecording {
         this.voteSD1 = voteSD1;
         this.voteSD2 = voteSD2;
         this.printer = printer;
-        recordVotes();
-        printBallot();
+        //recordVotes();
+        //printBallot();
     }
 
 
@@ -48,12 +48,13 @@ public class VoteRecording {
         return lines;
     }
 
-    private void printBallot() {
+    public void printBallot() {
         List<String> ballotStr = ballotToListString();
         printer.printBatch(ballotStr);
     }
 
-    private void recordVotes() {
+
+    public void recordVotes() {
         List<String> ballotLines = ballotToListString();
 
         for (String line : ballotLines) {

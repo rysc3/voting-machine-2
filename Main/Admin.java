@@ -36,7 +36,7 @@ public class Admin {
                 controller.turnOn(); // turn the screen on
 
                 // TODO: Open voting toggle to close voting
-                controller.showProposition(new Proposition("", "", 0, null), new String[] { "Open Voting", "Exit" });
+                controller.showProposition(new Proposition("Admin Controls", "", 0, null), new String[] { "Open Voting", "Exit" });
 
                 controller.registerListener(receivingQueue);
 

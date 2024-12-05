@@ -3,6 +3,7 @@ package Main;
 import Screen.screenControl.ScreenController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,6 +18,7 @@ public class Voter {
     private boolean votingComplete;
     private Thread voterThread; // Reference to the voter thread
     private boolean isRunning = true; // Flag to control the thread loop
+    private VoteRecording finalVote;
 
     private final BlockingQueue<Message> receivingQueue = new LinkedBlockingQueue<>();
 
@@ -42,9 +44,7 @@ public class Voter {
                 // print for testing
                 ExtractInfoXML.printBallot(myBallot);
 
-                myBallot.propositions().add(myBallot.propositions().size(), new Proposition("Submit Ballot?", "Verify on the printer that all of your options are as intended. If they are correct, press \"Finished\" to submit your vote."
-                        , 0, null));
-                String[] backNextNavBtns = new String[] { "back", "next" };
+                String[] backNextNavBtns = new String[] { "Back", "Next" };
 
                 // Start voting process
                 ScreenController controller = ScreenController.getInstance(); // get screen instance
@@ -55,7 +55,6 @@ public class Voter {
                 votingComplete = false;
                 int currentPropositionIndex = 0;
 
-                // TODO: Check this voting loop, not sure if its entirely correct
                 while (!votingComplete) {
                     // Wait for messages from ScreenController
                     Message message = receivingQueue.take(); // Blocking call to wait for message
@@ -68,6 +67,11 @@ public class Voter {
                                 currentPropositionIndex++;
                                 controller.showProposition(myBallot.propositions().get(currentPropositionIndex),
                                         backNextNavBtns);
+                            } else if(currentPropositionIndex < myBallot.propositions().size()) {
+                                currentPropositionIndex++;
+                                controller.showProposition(new Proposition("Submit Ballot?", "Verify on the printer that all of your options are as intended. If they are correct, press \"Finished\" to submit your vote.", 0, null), new String[]{"Back", "Finish"});
+                                finalVote = new VoteRecording(myBallot, cardCode, voteSD1, voteSD2, printer);
+                                finalVote.printBallot();
                             } else {
                                 System.out.println("No more propositions. Voting complete.");
                                 votingComplete = true;
@@ -93,7 +97,7 @@ public class Voter {
                     }
                 }
                 // Step 5: Complete the ballot once voting is done
-
+                completedBallot();
                 // controller.
 
             } catch (IOException e) {
@@ -111,8 +115,11 @@ public class Voter {
      * voter has completed ballot, record the votes
      */
     private void completedBallot() {
-        new VoteRecording(myBallot, cardCode, voteSD1, voteSD2, printer);
-
+        finalVote = new VoteRecording(myBallot, cardCode, voteSD1, voteSD2, printer);
+        finalVote.recordVotes();
+        for (int i = 0; i < 50; i++) {
+            printer.printLine("");
+        }
     }
 
     public void cleanup() {

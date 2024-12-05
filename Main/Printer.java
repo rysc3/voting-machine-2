@@ -14,7 +14,7 @@ public class Printer {
     private VBox page;
     private ScrollPane sp;
     private Stage stage;
-    private final Double pageWidth = 300.0;
+    private final Double pageWidth = 600.0;
 
     public Printer() {
         this.hasFailed = false;
@@ -74,7 +74,7 @@ public class Printer {
         new Thread(() -> {
             for (String ballotLine : strings) {
                 try {
-                    Thread.sleep(500); // Simulate delay
+                    Thread.sleep(250); // Simulate delay
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
