@@ -15,7 +15,6 @@ import javafx.application.Application;
 public class Main {
 
     // Build in Classes
-    private Printer pntr;
     private SDCardDriver SDCard;
     private TamperSensor TampSens;
     private CardReader crdr;
@@ -33,25 +32,9 @@ public class Main {
     private PrintWriter out;
     private BufferedReader in;
 
-    private final String clientName = "DeviceManager";
-
     // file paths
     String SDCardDriverFilePath;
     String printerFilePath;
-
-    // Example method to simulate the behavior
-    // public static void main(String[] args) throws IOException {
-    // Printer printer = new Printer("printerFile.txt");
-    // SDCardDriver sdCardDriver = new SDCardDriver("sdCardDriver.txt", Mode.R);
-    // TamperSensor tamperSensor = new TamperSensor();
-    // CardReader cardReader = new CardReader();
-    // Latch latch = new Latch();
-
-    // DeviceManager manager = new DeviceManager(printer, sdCardDriver,
-    // tamperSensor, cardReader, latch);
-
-    // manager.connectToServer("localhost", 12345);
-    // }
 
     private static ScreenController scr;
 
@@ -65,43 +48,13 @@ public class Main {
         new Thread(() -> Application.launch(ScreenController.class)).start();
 
 
-        // Wait for the JavaFX application to initialize the Controller instance
+        // Wait for java to initialize the Controller instance
         while ((scr = ScreenController.getInstance()) == null) {
             // Busy-wait until the Controller instance is available
         }
 
-
-        //scr.connectToServer("localhost", 123);
-
         voteManager.startManagerThread();
     }
-
-    /*
-     * TODO We are currently initializing all of these things in VoteManager. I
-     * think we want to keep it there.
-     */
-    // public Main(Printer printer, SDCardDriver sdCard, TamperSensor tamperSensor,
-    // CardReader cardReader, Latch latch) {
-    // this.pntr = printer;
-    // this.SDCard = sdCard;
-    // this.TampSens = tamperSensor;
-    // this.crdr = cardReader;
-    // this.ltch = latch;
-
-    // this.hasPrinterFailed = false;
-    // this.hasTamperSensorFailed = false;
-    // this.hasCardReaderFailed = false;
-    // this.hasSDCardDriverFailed = false;
-    // this.hasLatchSensorFailed = false;
-
-    // //this.isCardInserted = false;
-    // this.SDCardDriverFilePath = null;
-    // this.printerFilePath = null;
-
-    // //this.cardID = null;
-    // //this.cardType = null;
-
-    // }
 
     public void connectToServer(String host, int port) {
         try {
