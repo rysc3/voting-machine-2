@@ -201,6 +201,13 @@ public class InputHandler {
         }
     }
 
+    public void deleteCard(String cardCode) {
+        if (cards.contains(cardCode)) {
+            cards.remove(cardCode);
+        }
+        System.out.println("Card erased.");
+    }
+
     private void removeCard(Scanner scan) {
         if (cardReader.cardType().equals("Voter")) {
             System.out.println(cardReader.cardCode() + " has been removed.");

@@ -38,6 +38,10 @@ public class ScreenController extends Application {
         this.ballotString = null;
     }
 
+    public void reset() {
+        listeners.clear(); // Remove all listeners
+    }
+
     public Printer getPrinterWindow() {
         return printerWindow;
     }
@@ -136,7 +140,7 @@ public class ScreenController extends Application {
             primaryStage.setScene(scene);
             primaryStage.setTitle("Voting System - Screen");
             primaryStage.show();
-            if (prop.options().isEmpty()) {
+            if (prop.options() == null || prop.options().isEmpty()) {
                 try {
                     queue.put(new Message("screenController", "noOptions")); // Put the value in the queue when button
                                                                              // is pressed

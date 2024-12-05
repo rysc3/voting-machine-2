@@ -22,6 +22,7 @@ public class VoteManager {
     private InputHandler inputHandler;
     private boolean failure;
     private ArrayList<String> failed = new ArrayList<>();
+    private ArrayList<String> admins = new ArrayList<>();
 
     public VoteManager() {
         // set up all device instances
@@ -78,19 +79,34 @@ public class VoteManager {
 
                 if (cardReader.isCardIn()) {
                     if (cardReader.cardType().equals("Admin") && admin == null) {
-                        admin = new Admin(cardReader.cardCode(), latches);
-                        admin.startAdminThread();
+                        if(!admins.contains(cardReader.cardCode())) {
+                            admin = new Admin(cardReader.cardCode(), latches, ScreenController.getInstance().getPrinterWindow());
+                            admins.add(cardReader.cardCode());
+                            admin.startAdminThread();
+                        }
+
                     }
-                    if (cardReader.cardType().equals("Voter") && voter == null) {
-                        // Todo: re-enable line below and remove this ^ line used for testing
-                        // if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
-                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2,
+                    if (cardReader.cardType().equals("Voter") && voter == null && admin != null) {
+                        if(!admin.isVotingOpen()) {
+                            System.out.println("Voting is closed.");
+                            cardReader.ejectCard();
+                        } else if (cardReader.cardType().equals("Voter") && voter == null) {
+                            voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2,
                                 ScreenController.getInstance().getPrinterWindow());
-                        voter.startVoterThread();
+                            voter.startVoterThread();
+                        }
                     }
                 }
 
+                if(voter != null && voter.getVotingComplete()) {
+                    inputHandler.deleteCard(cardReader.cardCode());
+                    cardReader.eraseCard();
+                    voter.cleanup();
+                    voter = null;
+                }
+
                 if (user.isUserDone()) {
+                    System.out.println("DEBUG TESTING DOES THIS SHOW UP IN THE TERMINAL!L?!?!?");
                     if (cardReader.cardType().equals("Voter")) {
                         cardReader.eraseCard();
                         voter = null;

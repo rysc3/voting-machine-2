@@ -22,6 +22,8 @@ public class VoteRecording {
         printBallot();
     }
 
+
+
     private List<String> ballotToListString() {
         List<String> lines = new ArrayList<>();
 

@@ -14,6 +14,9 @@ public class Voter {
     Printer printer;
     BlankBallot blankBallot;
     Ballot myBallot;
+    private boolean votingComplete;
+    private Thread voterThread; // Reference to the voter thread
+    private boolean isRunning = true; // Flag to control the thread loop
 
     private final BlockingQueue<Message> receivingQueue = new LinkedBlockingQueue<>();
 
@@ -39,6 +42,8 @@ public class Voter {
                 // print for testing
                 ExtractInfoXML.printBallot(myBallot);
 
+                myBallot.propositions().add(myBallot.propositions().size(), new Proposition("Submit Ballot?", "Verify on the printer that all of your options are as intended. If they are correct, press \"Finished\" to submit your vote."
+                        , 0, null));
                 String[] backNextNavBtns = new String[] { "back", "next" };
 
                 // Start voting process
@@ -47,10 +52,10 @@ public class Voter {
                 controller.showProposition(myBallot.propositions().get(0), backNextNavBtns);
                 controller.registerListener(receivingQueue);
 
-                boolean votingComplete = false;
+                votingComplete = false;
                 int currentPropositionIndex = 0;
 
-                // TODO: Check this voting loop, not sure if its entierly correct
+                // TODO: Check this voting loop, not sure if its entirely correct
                 while (!votingComplete) {
                     // Wait for messages from ScreenController
                     Message message = receivingQueue.take(); // Blocking call to wait for message
@@ -66,6 +71,8 @@ public class Voter {
                             } else {
                                 System.out.println("No more propositions. Voting complete.");
                                 votingComplete = true;
+
+                                controller.showProposition(new Proposition("", "", 0, null), null);
                             }
                             break;
 
@@ -86,8 +93,7 @@ public class Voter {
                     }
                 }
                 // Step 5: Complete the ballot once voting is done
-                completedBallot();
-                // TODO @ryan exit at this point.
+
                 // controller.
 
             } catch (IOException e) {
@@ -106,5 +112,27 @@ public class Voter {
      */
     private void completedBallot() {
         new VoteRecording(myBallot, cardCode, voteSD1, voteSD2, printer);
+    }
+
+    public void cleanup() {
+        System.out.println("Cleaning up Voter resources...");
+
+        // Reset the screen for the next session
+        ScreenController.getInstance().reset();
+
+        // Clear the receiving queue to remove any leftover messages
+        receivingQueue.clear();
+
+        // Signal the thread to stop running
+        isRunning = false;
+
+        // Interrupt the thread if it is blocked
+        if (Thread.currentThread() != null && Thread.currentThread().isAlive()) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public boolean getVotingComplete() {
+        return votingComplete;
     }
 }

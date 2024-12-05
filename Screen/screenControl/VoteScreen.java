@@ -76,7 +76,7 @@ public class VoteScreen {
         descriptionLabel.setWrapText(true);
 
         String numOptionString = "";
-        if (!proposition.options().isEmpty()) {
+        if (proposition.options() != null && !proposition.options().isEmpty()) {
             numOptionString = "Select " + proposition.selectableOptions() + " Option"
                     + (proposition.selectableOptions() > 1 ? "s" : "");
         }
@@ -89,7 +89,7 @@ public class VoteScreen {
         optionsBox.setAlignment(Pos.CENTER);
 
         // Fill Flowpane with proposition options
-        if (!proposition.options().isEmpty()) {
+        if (proposition.options() != null && !proposition.options().isEmpty()) {
             for (int i = 0; i < proposition.options().size(); i++) {
                 Option op = proposition.options().get(i);
                 String optionText = op.description();
