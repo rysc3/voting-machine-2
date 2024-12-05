@@ -15,7 +15,6 @@ public class Voter {
     BlankBallot blankBallot;
     Ballot myBallot;
 
-    private final String name = "voter";
     private final BlockingQueue<Message> receivingQueue = new LinkedBlockingQueue<>();
 
     public Voter(String cardCode, SDCardDriver ballotSD, SDCardDriver voteSD1, SDCardDriver voteSD2, Printer printer) {
@@ -88,6 +87,8 @@ public class Voter {
                 }
                 // Step 5: Complete the ballot once voting is done
                 completedBallot();
+                // TODO @ryan exit at this point.
+                // controller.
 
             } catch (IOException e) {
                 System.err.println("Error initializing ballot: " + e.getMessage());
@@ -98,44 +99,6 @@ public class Voter {
         });
 
         voterThread.start();
-    }
-
-    private void startVoting() {
-        // Todo: screen stuff?
-
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Message message = receivingQueue.take(); // Blocking call to wait for a message
-                    processScreenMessage(message);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.out.println("Voter message processing interrupted.");
-                    break;
-                }
-            }
-        }).start();
-
-    }
-
-    // Method to handle messages from ScreenController
-    private void processScreenMessage(Message message) {
-        System.out.println("Voter received message: " + message.getContent());
-
-        // Process messages as needed (e.g., handle "next" or "back" navigation)
-        switch (message.getContent()) {
-            case "next":
-                System.out.println("Navigating to next proposition.");
-                // Logic for "next" button press
-                break;
-            case "back":
-                System.out.println("Navigating to previous proposition.");
-                // Logic for "back" button press
-                break;
-            default:
-                System.out.println("Unknown button action: " + message.getContent());
-                break;
-        }
     }
 
     /**
