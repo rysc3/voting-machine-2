@@ -4,7 +4,7 @@ import Screen.screenControl.ScreenController;
 
 import java.util.ArrayList;
 
-public class    VoteManager {
+public class VoteManager {
 
     private Printer printer;
     private SDCardDriver vDataSD1;
@@ -22,7 +22,6 @@ public class    VoteManager {
     private InputHandler inputHandler;
     private boolean failure;
     private ArrayList<String> failed = new ArrayList<>();
-
 
     public VoteManager() {
         // set up all device instances
@@ -68,15 +67,13 @@ public class    VoteManager {
                     inputHandler.setFailedList(failed);
                     // Todo: Machine has failed: notify admin, abort voter
                     if (admin != null) {
-                        // Todo: should NOT shut down automatically, should make only screen option for the admin be shutdown
-                        //admin.sendFailureNotification();
+                        // Todo: should NOT shut down automatically, should make only screen option for
+                        // the admin be shutdown
+                        // admin.sendFailureNotification();
                     }
                     if (voter != null) {
                         // abort voter thread, discard votes and do not erase card
                     }
-
-                    // TODO @ryan screenController logic
-                    // screenController.showShutdownScreen();
                 }
 
                 if (cardReader.isCardIn()) {
@@ -85,9 +82,10 @@ public class    VoteManager {
                         admin.startAdminThread();
                     }
                     if (cardReader.cardType().equals("Voter") && voter == null) {
-                        //Todo: re-enable line below and remove this ^ line used for testing
-                    //if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
-                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2, ScreenController.getInstance().getPrinterWindow());
+                        // Todo: re-enable line below and remove this ^ line used for testing
+                        // if (cardReader.cardType().equals("Voter") && votingIsOpen && voter == null) {
+                        voter = new Voter(cardReader.cardCode(), ballotSD, vDataSD1, vDataSD2,
+                                ScreenController.getInstance().getPrinterWindow());
                         voter.startVoterThread();
                     }
                 }
