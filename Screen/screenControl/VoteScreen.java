@@ -1,7 +1,6 @@
 package Screen.screenControl;
 
 import Main.Option;
-import Screen.testSuite.Proposition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,13 +19,13 @@ import java.util.Locale;
  * Format is:
  *
  * ___________________________________
- *               HEADER               |
- *             Description            |
- *                                    |
- *      option1         option2       |
- *      option3         option..      |
- *                                    |
- *  NavBtn1     NavBtn2     NavBtn... |
+ * HEADER |
+ * Description |
+ * |
+ * option1 option2 |
+ * option3 option.. |
+ * |
+ * NavBtn1 NavBtn2 NavBtn... |
  * ____________________________________
  *
  * Header - Proposition.propName
@@ -34,9 +33,11 @@ import java.util.Locale;
  * Options - (ArrayList) proposition.options
  * NavButtons - (String[]) this.nav
  *
- * Number of selectable options : proposition.selectableOptions (single or multi choice)
+ * Number of selectable options : proposition.selectableOptions (single or multi
+ * choice)
  *
- * Nav buttons return their index to the parent class. Used for overall logic like "go back" or "next".
+ * Nav buttons return their index to the parent class. Used for overall logic
+ * like "go back" or "next".
  *
  */
 public class VoteScreen {
@@ -103,12 +104,6 @@ public class VoteScreen {
 
                 final int index = i;
 
-                /**
-                 * TODO:
-                 * Modify the button action to do what exists below, BUT only if it is entering
-                 * or exiting the queue!!
-                 * theres a poop ass mspaint photo in discord showing what i mean
-                 */
                 optionButton.setOnAction(e -> {
                     boolean isSelected = proposition.options().get(index).isSelected();
                     int currentSelections = 0;
@@ -203,17 +198,6 @@ public class VoteScreen {
                         "-fx-border-radius: 10; " +
                         "-fx-background-radius: 10; " +
                         "-fx-padding: 10px;"));
-    }
-
-    /*
-     * TODO @Keegan We need the logic here to show a shutdown screen. Should only
-     * have a single selectable option "Shut down" on it.
-     *
-     * Keegan: Should be doable by just having controller draw a screen with an empty proposition
-     * and 1 nav button "shutdown"
-     */
-    public void createShutdownScreen() {
-
     }
 
 }
